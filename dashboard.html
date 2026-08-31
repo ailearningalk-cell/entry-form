@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -37,10 +37,10 @@
 <body>
 
 <div class="container">
-    <h2>আয়-ব্যয়, বিনিয়োগ, ঋণ ও সম্পদ ড্যাশবোর্ড</h2>
+    <h2>Financial Summary Dashboard</h2>
 
     <div class="filter-section">
-        <label for="yearFilter">Year / বছর নির্বাচন:</label>
+        <label for="yearFilter">Select Year:</label>
         <select id="yearFilter" onchange="fetchDashboardData()">
             <option value="2026" selected>2026</option>
             <option value="2025">2025</option>
@@ -51,38 +51,38 @@
     <!-- Top Summary Cards -->
     <div class="card-grid">
         <div class="card card-income">
-            <h4>মোট আয় (Total Income)</h4>
+            <h4>Total Income</h4>
             <div class="amount" id="cardIncome">৳ 0.00</div>
         </div>
         <div class="card card-expense">
-            <h4>মোট ব্যয় (Total Expense)</h4>
+            <h4>Total Expense</h4>
             <div class="amount" id="cardExpense">৳ 0.00</div>
         </div>
         <div class="card card-surplus">
-            <h4>নিট অবশিষ্ট/সঞ্চয় (Net Surplus)</h4>
+            <h4>Net Surplus</h4>
             <div class="amount" id="cardSurplus">৳ 0.00</div>
         </div>
         <div class="card card-investment">
-            <h4>মোট বিনিয়োগ (Total Investment)</h4>
+            <h4>Total Investment</h4>
             <div class="amount" id="cardInvestment">৳ 0.00</div>
         </div>
     </div>
 
     <!-- Monthly Breakdown Table -->
-    <h3>মাসিক ভিত্তিক সংক্ষিপ্ত আর্থিক বিবরণী</h3>
-    <div id="loadingMsg" class="loading">ডাটা লোড হচ্ছে...</div>
+    <h3>Monthly Financial Breakdown</h3>
+    <div id="loadingMsg" class="loading">Loading Data...</div>
     <div class="table-container">
         <table>
             <thead>
                 <tr>
-                    <th>মাস (Month)</th>
-                    <th>আয় (Income)</th>
-                    <th>ব্যয় (Expense)</th>
-                    <th>সঞ্চয় (Surplus)</th>
-                    <th>বিনিয়োগ (Investment)</th>
-                    <th>ঋণ/স্থানান্তর (Loan)</th>
-                    <th>সম্পদ (Asset)</th>
-                    <th>দায় (Liability)</th>
+                    <th>Month</th>
+                    <th>Income</th>
+                    <th>Expense</th>
+                    <th>Surplus</th>
+                    <th>Investment</th>
+                    <th>Loan / Transfer</th>
+                    <th>Asset</th>
+                    <th>Liability</th>
                 </tr>
             </thead>
             <tbody id="tableBody"></tbody>
@@ -94,7 +94,7 @@
 </div>
 
 <script>
-    // আপনার Apps Script Web App URL এখানে বসান
+    // Replace with your Google Apps Script Web App URL
     const scriptURL = 'https://script.google.com/macros/s/AKfycbyjf9eQuTWzXa7wazCLlZR1iHLm7Cj2E4X2WjkC9SvwgwxcgTqc0pnlzZBDTN_S47tJ/exec';
 
     function fetchDashboardData() {
@@ -108,7 +108,7 @@
                 renderDashboard(data.summary);
             })
             .catch(err => {
-                document.getElementById('loadingMsg').innerText = 'ডাটা লোড করতে সমস্যা হয়েছে!';
+                document.getElementById('loadingMsg').innerText = 'Failed to load data!';
                 console.error(err);
             });
     }
@@ -145,15 +145,15 @@
             `;
         });
 
-        // Top Cards Update
+        // Update KPI Cards
         document.getElementById('cardIncome').innerText = `৳ ${totals.Income.toFixed(2)}`;
         document.getElementById('cardExpense').innerText = `৳ ${totals.Expense.toFixed(2)}`;
         document.getElementById('cardSurplus').innerText = `৳ ${totals.Surplus.toFixed(2)}`;
         document.getElementById('cardInvestment').innerText = `৳ ${totals.Investment.toFixed(2)}`;
 
-        // Total Row Update
+        // Update Total Row
         tfoot.innerHTML = `
-            <td>মোট বার্ষিক যোগফল (Total)</td>
+            <td>Total Summary</td>
             <td>৳ ${totals.Income.toFixed(2)}</td>
             <td>৳ ${totals.Expense.toFixed(2)}</td>
             <td>৳ ${totals.Surplus.toFixed(2)}</td>
