@@ -1,1 +1,171 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Dashboard</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 20px; }
+        .container { max-width: 1100px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #1a365d; margin-bottom: 20px; }
+        
+        .filter-section { margin-bottom: 20px; display: flex; align-items: center; gap: 10px; font-weight: bold; }
+        .filter-section select { padding: 6px 12px; font-size: 16px; border-radius: 4px; border: 1px solid #ccc; }
 
+        /* KPI Cards Grid */
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 30px; }
+        .card { padding: 15px; border-radius: 6px; text-align: center; color: white; }
+        .card h4 { margin: 0 0 10px 0; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .card .amount { font-size: 20px; font-weight: bold; }
+        
+        .card-income { background-color: #1b4965; }
+        .card-expense { background-color: #b7094c; }
+        .card-surplus { background-color: #2b9348; }
+        .card-investment { background-color: #52b788; }
+
+        /* Monthly Table */
+        .table-container { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
+        th, td { border: 1px solid #cbd5e1; padding: 10px; text-align: right; }
+        th { background-color: #1e3a8a; color: white; text-align: center; }
+        td:first-child, th:first-child { text-align: left; font-weight: bold; }
+        tr:nth-child(even) { background-color: #f8fafc; }
+        .total-row { background-color: #e2e8f0 !important; font-weight: bold; }
+        .loading { text-align: center; font-weight: bold; color: #0284c7; margin: 20px 0; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>আয়-ব্যয়, বিনিয়োগ, ঋণ ও সম্পদ ড্যাশবোর্ড</h2>
+
+    <div class="filter-section">
+        <label for="yearFilter">Year / বছর নির্বাচন:</label>
+        <select id="yearFilter" onchange="fetchDashboardData()">
+            <option value="2026" selected>2026</option>
+            <option value="2025">2025</option>
+            <option value="2024">2024</option>
+        </select>
+    </div>
+
+    <!-- Top Summary Cards -->
+    <div class="card-grid">
+        <div class="card card-income">
+            <h4>মোট আয় (Total Income)</h4>
+            <div class="amount" id="cardIncome">৳ 0.00</div>
+        </div>
+        <div class="card card-expense">
+            <h4>মোট ব্যয় (Total Expense)</h4>
+            <div class="amount" id="cardExpense">৳ 0.00</div>
+        </div>
+        <div class="card card-surplus">
+            <h4>নিট অবশিষ্ট/সঞ্চয় (Net Surplus)</h4>
+            <div class="amount" id="cardSurplus">৳ 0.00</div>
+        </div>
+        <div class="card card-investment">
+            <h4>মোট বিনিয়োগ (Total Investment)</h4>
+            <div class="amount" id="cardInvestment">৳ 0.00</div>
+        </div>
+    </div>
+
+    <!-- Monthly Breakdown Table -->
+    <h3>মাসিক ভিত্তিক সংক্ষিপ্ত আর্থিক বিবরণী</h3>
+    <div id="loadingMsg" class="loading">ডাটা লোড হচ্ছে...</div>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>মাস (Month)</th>
+                    <th>আয় (Income)</th>
+                    <th>ব্যয় (Expense)</th>
+                    <th>সঞ্চয় (Surplus)</th>
+                    <th>বিনিয়োগ (Investment)</th>
+                    <th>ঋণ/স্থানান্তর (Loan)</th>
+                    <th>সম্পদ (Asset)</th>
+                    <th>দায় (Liability)</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+            <tfoot>
+                <tr class="total-row" id="tableTotal"></tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+<script>
+    // আপনার Apps Script Web App URL এখানে বসান
+    const scriptURL = 'YOUR_APPS_SCRIPT_WEB_APP_URL_HERE';
+
+    function fetchDashboardData() {
+        const year = document.getElementById('yearFilter').value;
+        document.getElementById('loadingMsg').style.display = 'block';
+
+        fetch(`${scriptURL}?year=${year}`)
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('loadingMsg').style.display = 'none';
+                renderDashboard(data.summary);
+            })
+            .catch(err => {
+                document.getElementById('loadingMsg').innerText = 'ডাটা লোড করতে সমস্যা হয়েছে!';
+                console.error(err);
+            });
+    }
+
+    function renderDashboard(summary) {
+        const tbody = document.getElementById('tableBody');
+        const tfoot = document.getElementById('tableTotal');
+        tbody.innerHTML = '';
+        
+        let totals = { Income: 0, Expense: 0, Surplus: 0, Investment: 0, Loan: 0, Asset: 0, Liability: 0 };
+        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+        months.forEach(m => {
+            const d = summary[m];
+            totals.Income += d.Income;
+            totals.Expense += d.Expense;
+            totals.Surplus += d.Surplus;
+            totals.Investment += d.Investment;
+            totals.Loan += d.Loan;
+            totals.Asset += d.Asset;
+            totals.Liability += d.Liability;
+
+            tbody.innerHTML += `
+                <tr>
+                    <td>${m}</td>
+                    <td>${d.Income.toFixed(2)}</td>
+                    <td>${d.Expense.toFixed(2)}</td>
+                    <td>${d.Surplus.toFixed(2)}</td>
+                    <td>${d.Investment.toFixed(2)}</td>
+                    <td>${d.Loan.toFixed(2)}</td>
+                    <td>${d.Asset.toFixed(2)}</td>
+                    <td>${d.Liability.toFixed(2)}</td>
+                </tr>
+            `;
+        });
+
+        // Top Cards Update
+        document.getElementById('cardIncome').innerText = `৳ ${totals.Income.toFixed(2)}`;
+        document.getElementById('cardExpense').innerText = `৳ ${totals.Expense.toFixed(2)}`;
+        document.getElementById('cardSurplus').innerText = `৳ ${totals.Surplus.toFixed(2)}`;
+        document.getElementById('cardInvestment').innerText = `৳ ${totals.Investment.toFixed(2)}`;
+
+        // Total Row Update
+        tfoot.innerHTML = `
+            <td>মোট বার্ষিক যোগফল (Total)</td>
+            <td>৳ ${totals.Income.toFixed(2)}</td>
+            <td>৳ ${totals.Expense.toFixed(2)}</td>
+            <td>৳ ${totals.Surplus.toFixed(2)}</td>
+            <td>৳ ${totals.Investment.toFixed(2)}</td>
+            <td>৳ ${totals.Loan.toFixed(2)}</td>
+            <td>৳ ${totals.Asset.toFixed(2)}</td>
+            <td>৳ ${totals.Liability.toFixed(2)}</td>
+        `;
+    }
+
+    // Initial Load
+    fetchDashboardData();
+</script>
+</body>
+</html>
