@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Financial Entry Form</title>
+    <!-- Flatpickr CSS for custom Date Picker -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -20,7 +22,7 @@
             border-radius: 12px;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
         }
-        /* Fixed Header Height to prevent jump between pages */
+        /* Fixed Header Height (Same as dashboard.html) */
         .header-bar {
             display: flex;
             justify-content: space-between;
@@ -79,7 +81,7 @@
         button[type="submit"] {
             width: 100%;
             padding: 14px;
-            margin-top: 10px;
+            margin-top: 15px;
             font-size: 16px;
             font-weight: 700;
             color: #ffffff;
@@ -109,10 +111,10 @@
 
     <form id="financeForm">
         <div class="form-grid">
-            <!-- Date -->
+            <!-- Date Input -->
             <div class="form-group">
                 <label for="date">Date</label>
-                <input type="date" id="date" name="date" required>
+                <input type="text" id="date" name="date" placeholder="dd/mm/yyyy" required>
             </div>
 
             <!-- Transaction Type -->
@@ -162,8 +164,30 @@
     <p id="statusMsg"></p>
 </div>
 
+<!-- Flatpickr JS -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
-    document.getElementById('date').valueAsDate = new Date();
+    // Variable to store actual backend date format (YYYY-MM-DD)
+    let formattedBackendDate = "";
+
+    function setBackendDate(dateObj) {
+        const year = dateObj.getFullYear();
+        const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+        const day = String(dateObj.getDate()).padStart(2, '0');
+        formattedBackendDate = `${year}-${month}-${day}`;
+    }
+
+    // Initialize Flatpickr for DD/MM/YYYY view format
+    const fp = flatpickr("#date", {
+        dateFormat: "d/m/Y",
+        defaultDate: "today",
+        onReady: function(selectedDates) {
+            if (selectedDates[0]) setBackendDate(selectedDates[0]);
+        },
+        onChange: function(selectedDates) {
+            if (selectedDates[0]) setBackendDate(selectedDates[0]);
+        }
+    });
 
     const subCategoriesData = {
         "Income": ["Salary", "Honourarium", "Bank Int", "FDR_Int", "Bond_Int", "SP_Int", "Rent", "Business", "Freelancing", "Other Income"],
@@ -193,7 +217,7 @@
         }
     }
 
-    const scriptURL = 'YOUR_WEB_APP_URL_HERE';
+    const scriptURL = 'YOUR_WEB_APP_URL_HERE'; // Replace with your Web App URL
     const form = document.getElementById('financeForm');
     const submitBtn = document.getElementById('submitBtn');
     const statusMsg = document.getElementById('statusMsg');
@@ -204,12 +228,17 @@
         statusMsg.style.color = "#0284c7";
         statusMsg.innerText = "Saving data...";
 
-        fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+        const formData = new FormData(form);
+        // Ensure backend gets YYYY-MM-DD
+        formData.set('date', formattedBackendDate);
+
+        fetch(scriptURL, { method: 'POST', body: formData })
             .then(response => {
                 statusMsg.style.color = "#10b981";
                 statusMsg.innerText = "Data successfully saved to Google Sheet!";
                 form.reset();
-                document.getElementById('date').valueAsDate = new Date();
+                fp.setDate(new Date());
+                setBackendDate(new Date());
                 document.getElementById("subCategory").disabled = true;
                 submitBtn.disabled = false;
             })
