@@ -1,78 +1,198 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Financial Entry Form to Google Sheet</title>
+    <title>Financial Entry Form</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #f4f6f9; padding: 20px; }
-        .container { max-width: 600px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        h2 { text-align: center; color: #333; margin-bottom: 20px; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; font-weight: 600; margin-bottom: 5px; color: #555; }
-        input, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; font-size: 16px; font-weight: bold; color: #fff; background-color: #28a745; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px; }
-        button:disabled { background-color: #6c757d; }
-        #statusMsg { text-align: center; font-weight: bold; margin-top: 15px; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+            padding: 20px;
+        }
+        .container {
+            max-width: 650px;
+            margin: 30px auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        }
+        .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        h2 {
+            color: #1e293b;
+            font-size: 22px;
+        }
+        .btn-dashboard {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 16px;
+            background-color: #4f46e5;
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 6px;
+            transition: background-color 0.2s ease;
+        }
+        .btn-dashboard:hover {
+            background-color: #4338ca;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+        label {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        input, select {
+            width: 100%;
+            padding: 11px 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 15px;
+            background-color: #f8fafc;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #4f46e5;
+            background-color: #fff;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+        }
+        button[type="submit"] {
+            width: 100%;
+            padding: 13px;
+            margin-top: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            color: #ffffff;
+            background-color: #10b981;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        button[type="submit"]:hover {
+            background-color: #059669;
+        }
+        button:disabled {
+            background-color: #9ca3af;
+            cursor: not-allowed;
+        }
+        #statusMsg {
+            text-align: center;
+            font-weight: 600;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        @media (max-width: 550px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .form-group.full-width {
+                grid-column: span 1;
+            }
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>Financial Data Entry</h2>
+    <div class="header-bar">
+        <h2>Financial Entry Form</h2>
+        <!-- Dashboard Navigation Link -->
+        <a href="dashboard.html" class="btn-dashboard">📊 View Dashboard</a>
+    </div>
+
     <form id="financeForm">
-        <div class="form-group">
-            <label for="date">Date:</label>
-            <input type="date" id="date" name="date" required>
-        </div>
+        <div class="form-grid">
+            <!-- Date -->
+            <div class="form-group">
+                <label for="date">Date</label>
+                <input type="date" id="date" name="date" required>
+            </div>
 
-        <div class="form-group">
-            <label for="transactionType">Transaction Type:</label>
-            <select id="transactionType" name="transactionType" onchange="updateSubCategories()" required>
-                <option value="">-- Select Type --</option>
-                <option value="Income">Income</option>
-                <option value="Expense">Expense</option>
-                <option value="Investment">Investment</option>
-                <option value="Loan/Transfer">Loan/Transfer</option>
-                <option value="Asset">Asset</option>
-                <option value="Liability">Liability</option>
-            </select>
-        </div>
+            <!-- Transaction Type -->
+            <div class="form-group">
+                <label for="transactionType">Transaction Type</label>
+                <select id="transactionType" name="transactionType" onchange="updateSubCategories()" required>
+                    <option value="">-- Select Type --</option>
+                    <option value="Income">Income</option>
+                    <option value="Expense">Expense</option>
+                    <option value="Investment">Investment</option>
+                    <option value="Loan/Transfer">Loan/Transfer</option>
+                    <option value="Asset">Asset</option>
+                    <option value="Liability">Liability</option>
+                </select>
+            </div>
 
-        <div class="form-group">
-            <label for="subCategory">Sub Category:</label>
-            <select id="subCategory" name="subCategory" required disabled>
-                <option value="">-- Select Sub Category --</option>
-            </select>
-        </div>
+            <!-- Sub Category -->
+            <div class="form-group full-width">
+                <label for="subCategory">Sub Category</label>
+                <select id="subCategory" name="subCategory" required disabled>
+                    <option value="">-- Select Sub Category --</option>
+                </select>
+            </div>
 
-        <div class="form-group">
-            <label for="paymentMethod">Payment Method:</label>
-            <select id="paymentMethod" name="paymentMethod" required>
-                <option value="">-- Select Method --</option>
-                <option value="Cash">Cash</option><option value="DBBL">DBBL</option><option value="JBL">JBL</option>
-                <option value="BDBL">BDBL</option><option value="IBBL">IBBL</option><option value="SCB_V">SCB_V</option>
-                <option value="SCB_M">SCB_M</option><option value="EBL_V">EBL_V</option><option value="EBL_M">EBL_M</option>
-                <option value="Meghna">Meghna</option><option value="bKash">bKash</option><option value="Nagad">Nagad</option>
-                <option value="Rocket">Rocket</option><option value="Bank Transfer">Bank Transfer</option><option value="Credit Card">Credit Card</option>
-            </select>
-        </div>
+            <!-- Payment Method -->
+            <div class="form-group">
+                <label for="paymentMethod">Payment Method</label>
+                <select id="paymentMethod" name="paymentMethod" required>
+                    <option value="">-- Select Method --</option>
+                    <option value="Cash">Cash</option><option value="DBBL">DBBL</option><option value="JBL">JBL</option>
+                    <option value="BDBL">BDBL</option><option value="IBBL">IBBL</option><option value="SCB_V">SCB_V</option>
+                    <option value="SCB_M">SCB_M</option><option value="EBL_V">EBL_V</option><option value="EBL_M">EBL_M</option>
+                    <option value="Meghna">Meghna</option><option value="bKash">bKash</option><option value="Nagad">Nagad</option>
+                    <option value="Rocket">Rocket</option><option value="Bank Transfer">Bank Transfer</option><option value="Credit Card">Credit Card</option>
+                </select>
+            </div>
 
-        <div class="form-group">
-            <label for="amount">Value to Tk:</label>
-            <input type="number" id="amount" name="amount" min="0" step="any" placeholder="Amount in BDT" required>
-        </div>
+            <!-- Amount -->
+            <div class="form-group">
+                <label for="amount">Value to Tk</label>
+                <input type="number" id="amount" name="amount" min="0" step="any" placeholder="0.00" required>
+            </div>
 
-        <div class="form-group">
-            <label for="paymentMode">Payment Mode:</label>
-            <select id="paymentMode" name="paymentMode" required>
-                <option value="">-- Select Mode --</option>
-                <option value="Cash">Cash</option><option value="DBBL">DBBL</option><option value="JBL">JBL</option>
-                <option value="BDBL">BDBL</option><option value="IBBL">IBBL</option><option value="SCB_V">SCB_V</option>
-                <option value="SCB_M">SCB_M</option><option value="EBL_V">EBL_V</option><option value="EBL_M">EBL_M</option>
-                <option value="Meghna">Meghna</option><option value="bKash">bKash</option><option value="Nagad">Nagad</option>
-                <option value="Rocket">Rocket</option><option value="Bank Transfer">Bank Transfer</option><option value="Credit Card">Credit Card</option>
-            </select>
+            <!-- Payment Mode -->
+            <div class="form-group full-width">
+                <label for="paymentMode">Payment Mode</label>
+                <select id="paymentMode" name="paymentMode" required>
+                    <option value="">-- Select Mode --</option>
+                    <option value="Cash">Cash</option><option value="DBBL">DBBL</option><option value="JBL">JBL</option>
+                    <option value="BDBL">BDBL</option><option value="IBBL">IBBL</option><option value="SCB_V">SCB_V</option>
+                    <option value="SCB_M">SCB_M</option><option value="EBL_V">EBL_V</option><option value="EBL_M">EBL_M</option>
+                    <option value="Meghna">Meghna</option><option value="bKash">bKash</option><option value="Nagad">Nagad</option>
+                    <option value="Rocket">Rocket</option><option value="Bank Transfer">Bank Transfer</option><option value="Credit Card">Credit Card</option>
+                </select>
+            </div>
         </div>
 
         <button type="submit" id="submitBtn">Submit / Save</button>
@@ -102,7 +222,8 @@
             subSelect.disabled = false;
             subCategoriesData[selectedType].forEach(subCat => {
                 const option = document.createElement("option");
-                option.value = subCat; option.textContent = subCat;
+                option.value = subCat; 
+                option.textContent = subCat;
                 subSelect.appendChild(option);
             });
         } else {
@@ -119,21 +240,21 @@
     form.addEventListener('submit', e => {
         e.preventDefault();
         submitBtn.disabled = true;
-        statusMsg.style.color = "blue";
-        statusMsg.innerText = "Data Saving...";
+        statusMsg.style.color = "#0284c7";
+        statusMsg.innerText = "Saving data...";
 
         fetch(scriptURL, { method: 'POST', body: new FormData(form)})
             .then(response => {
-                statusMsg.style.color = "green";
-                statusMsg.innerText = "Data successfully saved in Google Sheet";
+                statusMsg.style.color = "#10b981";
+                statusMsg.innerText = "Data successfully saved to Google Sheet!";
                 form.reset();
                 document.getElementById('date').valueAsDate = new Date();
                 document.getElementById("subCategory").disabled = true;
                 submitBtn.disabled = false;
             })
             .catch(error => {
-                statusMsg.style.color = "red";
-                statusMsg.innerText = "Error..Try Again";
+                statusMsg.style.color = "#ef4444";
+                statusMsg.innerText = "Error saving data! Please try again.";
                 submitBtn.disabled = false;
             });
     });
