@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Entry Form to Google Sheet</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #f4f6f9; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #333; margin-bottom: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: 600; margin-bottom: 5px; color: #555; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; font-size: 16px; font-weight: bold; color: #fff; background-color: #28a745; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px; }
+        button:disabled { background-color: #6c757d; }
+        #statusMsg { text-align: center; font-weight: bold; margin-top: 15px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Financial Data Entry</h2>
+    <form id="financeForm">
+        <div class="form-group">
+            <label for="date">Date:</label>
+            <input type="date" id="date" name="date" required>
+        </div>
+
+        <div class="form-group">
+            <label for="transactionType">Transaction Type:</label>
+            <select id="transactionType" name="transactionType" onchange="updateSubCategories()" required>
+                <option value="">-- Select Type --</option>
+                <option value="Income">Income</option>
+                <option value="Expense">Expense</option>
+                <option value="Investment">Investment</option>
+                <option value="Loan/Transfer">Loan/Transfer</option>
+                <option value="Asset">Asset</option>
+                <option value="Liability">Liability</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="subCategory">Sub Category:</label>
+            <select id="subCategory" name="subCategory" required disabled>
+                <option value="">-- Select Sub Category --</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="paymentMethod">Payment Method:</label>
+            <select id="paymentMethod" name="paymentMethod" required>
+                <option value="">-- Select Method --</option>
+                <option value="Cash">Cash</option><option value="DBBL">DBBL</option><option value="JBL">JBL</option>
+                <option value="BDBL">BDBL</option><option value="IBBL">IBBL</option><option value="SCB_V">SCB_V</option>
+                <option value="SCB_M">SCB_M</option><option value="EBL_V">EBL_V</option><option value="EBL_M">EBL_M</option>
+                <option value="Meghna">Meghna</option><option value="bKash">bKash</option><option value="Nagad">Nagad</option>
+                <option value="Rocket">Rocket</option><option value="Bank Transfer">Bank Transfer</option><option value="Credit Card">Credit Card</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="amount">Value to Tk:</label>
+            <input type="number" id="amount" name="amount" min="0" step="any" placeholder="Amount in BDT" required>
+        </div>
+
+        <div class="form-group">
+            <label for="paymentMode">Payment Mode:</label>
+            <select id="paymentMode" name="paymentMode" required>
+                <option value="">-- Select Mode --</option>
+                <option value="Cash">Cash</option><option value="DBBL">DBBL</option><option value="JBL">JBL</option>
+                <option value="BDBL">BDBL</option><option value="IBBL">IBBL</option><option value="SCB_V">SCB_V</option>
+                <option value="SCB_M">SCB_M</option><option value="EBL_V">EBL_V</option><option value="EBL_M">EBL_M</option>
+                <option value="Meghna">Meghna</option><option value="bKash">bKash</option><option value="Nagad">Nagad</option>
+                <option value="Rocket">Rocket</option><option value="Bank Transfer">Bank Transfer</option><option value="Credit Card">Credit Card</option>
+            </select>
+        </div>
+
+        <button type="submit" id="submitBtn">Submit / Save</button>
+    </form>
+    <p id="statusMsg"></p>
+</div>
+
+<script>
+    document.getElementById('date').valueAsDate = new Date();
+
+    const subCategoriesData = {
+        "Income": ["Salary", "Honourarium", "Bank Int", "FDR_Int", "Bond_Int", "SP_Int", "Rent", "Business", "Freelancing", "Other Income"],
+        "Expense": ["Bazar", "Food", "Dress", "Family", "Education", "Medicine", "Treatment", "Donation", "Zakat", "Gift", "Social Exp", "Travelling", "Car_Driver", "Car_oil", "Car_Maint", "Fare", "Paper", "Rent", "Utility Bill", "Mobile/Internet", "Other Expense"],
+        "Investment": ["SP", "FDR", "Bond", "Land", "Building", "Chuti", "DPS", "Share Market", "Mutual Fund"],
+        "Loan/Transfer": ["Loan Given", "Loan Taken", "Loan Repaid", "Loan Received", "Bank Transfer"],
+        "Asset": ["Building", "SP", "FDR", "Land", "Gold", "Vehicle", "Electronics", "Cash/Bank Balance"],
+        "Liability": ["Home Loan", "Personal Loan", "Credit Card Due", "Other Payable"]
+    };
+
+    function updateSubCategories() {
+        const typeSelect = document.getElementById("transactionType");
+        const subSelect = document.getElementById("subCategory");
+        const selectedType = typeSelect.value;
+        subSelect.innerHTML = '<option value="">-- Select Sub Category --</option>';
+
+        if (selectedType && subCategoriesData[selectedType]) {
+            subSelect.disabled = false;
+            subCategoriesData[selectedType].forEach(subCat => {
+                const option = document.createElement("option");
+                option.value = subCat; option.textContent = subCat;
+                subSelect.appendChild(option);
+            });
+        } else {
+            subSelect.disabled = true;
+        }
+    }
+
+    // Google Apps Script URL লিঙ্ক করুন
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbyjf9eQuTWzXa7wazCLlZR1iHLm7Cj2E4X2WjkC9SvwgwxcgTqc0pnlzZBDTN_S47tJ/exec';
+    const form = document.getElementById('financeForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const statusMsg = document.getElementById('statusMsg');
+
+    form.addEventListener('submit', e => {
+        e.preventDefault();
+        submitBtn.disabled = true;
+        statusMsg.style.color = "blue";
+        statusMsg.innerText = "Data Saving...";
+
+        fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+            .then(response => {
+                statusMsg.style.color = "green";
+                statusMsg.innerText = "Data successfully saved in Google Sheet";
+                form.reset();
+                document.getElementById('date').valueAsDate = new Date();
+                document.getElementById("subCategory").disabled = true;
+                submitBtn.disabled = false;
+            })
+            .catch(error => {
+                statusMsg.style.color = "red";
+                statusMsg.innerText = "Error..Try Again";
+                submitBtn.disabled = false;
+            });
+    });
+</script>
+</body>
+</html>
