@@ -1,1202 +1,9 @@
-```html
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Financial Dashboard</title>
-
-    <!-- Google Font -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin">
-
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-        rel="stylesheet">
-
-    <style>
-
-        /* =========================================
-           GLOBAL
-        ========================================= */
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: 'Inter', 'Segoe UI', Tahoma, sans-serif;
-            background: linear-gradient(
-                135deg,
-                #eef2ff 0%,
-                #f8fafc 45%,
-                #ecfeff 100%
-            );
-            min-height: 100vh;
-            color: #1e293b;
-            padding: 30px 16px;
-        }
-
-
-        /* =========================================
-           MAIN CONTAINER
-        ========================================= */
-
-        .container {
-            width: 100%;
-            max-width: 1150px;
-            margin: 20px auto;
-            background: rgba(255, 255, 255, 0.97);
-            border-radius: 20px;
-            overflow: hidden;
-            border: 1px solid rgba(226, 232, 240, 0.8);
-
-            box-shadow:
-                0 20px 50px rgba(15, 23, 42, 0.10),
-                0 4px 12px rgba(15, 23, 42, 0.05);
-        }
-
-
-        /* =========================================
-           HEADER
-        ========================================= */
-
-        .header {
-            background: linear-gradient(
-                135deg,
-                #4f46e5,
-                #6366f1
-            );
-            padding: 24px 30px;
-            color: white;
-        }
-
-        .header-top {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 20px;
-        }
-
-        .title-section {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
-
-        .title-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 14px;
-            background: rgba(255, 255, 255, 0.18);
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            font-size: 23px;
-        }
-
-        .title-section h1 {
-            font-size: 22px;
-            font-weight: 700;
-            letter-spacing: -0.3px;
-        }
-
-        .title-section p {
-            font-size: 12px;
-            margin-top: 5px;
-            color: rgba(255, 255, 255, 0.82);
-        }
-
-        .btn-entry {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-
-            padding: 10px 16px;
-
-            border-radius: 10px;
-
-            background: rgba(255, 255, 255, 0.16);
-
-            color: white;
-            text-decoration: none;
-
-            font-size: 12px;
-            font-weight: 600;
-
-            border: 1px solid rgba(255, 255, 255, 0.25);
-
-            transition: all 0.2s ease;
-
-            white-space: nowrap;
-        }
-
-        .btn-entry:hover {
-            background: rgba(255, 255, 255, 0.28);
-            transform: translateY(-1px);
-        }
-
-
-        /* =========================================
-           CONTENT
-        ========================================= */
-
-        .content {
-            padding: 28px 30px 30px;
-        }
-
-
-        /* =========================================
-           FILTER SECTION
-        ========================================= */
-
-        .filter-section {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-
-            margin-bottom: 24px;
-
-            padding: 15px 18px;
-
-            border: 1px solid #e2e8f0;
-
-            background: #f8fafc;
-
-            border-radius: 12px;
-        }
-
-        .filter-left {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .filter-icon {
-            width: 36px;
-            height: 36px;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            border-radius: 9px;
-
-            background: #e0e7ff;
-
-            font-size: 17px;
-        }
-
-        .filter-label {
-            font-size: 13px;
-            font-weight: 700;
-            color: #334155;
-        }
-
-        .filter-description {
-            font-size: 10px;
-            color: #94a3b8;
-            margin-top: 3px;
-        }
-
-        .year-select {
-            min-width: 120px;
-            height: 40px;
-
-            padding: 0 12px;
-
-            border: 1px solid #cbd5e1;
-
-            border-radius: 9px;
-
-            background: white;
-
-            color: #334155;
-
-            font-family: inherit;
-            font-size: 13px;
-            font-weight: 600;
-
-            outline: none;
-            cursor: pointer;
-
-            transition: all 0.2s ease;
-        }
-
-        .year-select:hover {
-            border-color: #a5b4fc;
-        }
-
-        .year-select:focus {
-            border-color: #6366f1;
-
-            box-shadow:
-                0 0 0 3px
-                rgba(99, 102, 241, 0.12);
-        }
-
-
-        /* =========================================
-           KPI CARDS
-        ========================================= */
-
-        .card-grid {
-            display: grid;
-
-            grid-template-columns:
-                repeat(4, 1fr);
-
-            gap: 16px;
-
-            margin-bottom: 30px;
-        }
-
-        .card {
-            position: relative;
-
-            overflow: hidden;
-
-            min-height: 130px;
-
-            padding: 19px;
-
-            border-radius: 14px;
-
-            color: white;
-
-            box-shadow:
-                0 8px 20px
-                rgba(15, 23, 42, 0.10);
-
-            transition:
-                transform 0.2s ease,
-                box-shadow 0.2s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-2px);
-
-            box-shadow:
-                0 12px 25px
-                rgba(15, 23, 42, 0.14);
-        }
-
-        .card::after {
-            content: "";
-
-            position: absolute;
-
-            width: 110px;
-            height: 110px;
-
-            right: -30px;
-            bottom: -40px;
-
-            border-radius: 50%;
-
-            background:
-                rgba(255, 255, 255, 0.10);
-        }
-
-        .card-top {
-            display: flex;
-
-            align-items: center;
-
-            justify-content: space-between;
-
-            margin-bottom: 14px;
-        }
-
-        .card-icon {
-            width: 39px;
-            height: 39px;
-
-            display: flex;
-
-            align-items: center;
-            justify-content: center;
-
-            border-radius: 10px;
-
-            background:
-                rgba(255, 255, 255, 0.16);
-
-            font-size: 18px;
-        }
-
-        .card-label {
-            font-size: 10px;
-
-            font-weight: 700;
-
-            text-transform: uppercase;
-
-            letter-spacing: 0.6px;
-
-            opacity: 0.85;
-        }
-
-        .card .amount {
-            font-size: 21px;
-
-            font-weight: 700;
-
-            letter-spacing: -0.4px;
-
-            position: relative;
-
-            z-index: 2;
-        }
-
-        .card-subtitle {
-            font-size: 9px;
-
-            margin-top: 6px;
-
-            opacity: 0.75;
-
-            position: relative;
-
-            z-index: 2;
-        }
-
-
-        /* Card Colors */
-
-        .card-income {
-            background:
-                linear-gradient(
-                    135deg,
-                    #1e3a8a,
-                    #2563eb
-                );
-        }
-
-        .card-expense {
-            background:
-                linear-gradient(
-                    135deg,
-                    #9f1239,
-                    #e11d48
-                );
-        }
-
-        .card-surplus {
-            background:
-                linear-gradient(
-                    135deg,
-                    #166534,
-                    #22c55e
-                );
-        }
-
-        .card-investment {
-            background:
-                linear-gradient(
-                    135deg,
-                    #047857,
-                    #14b8a6
-                );
-        }
-
-
-        /* =========================================
-           TABLE HEADER
-        ========================================= */
-
-        .section-header {
-            display: flex;
-
-            align-items: center;
-
-            justify-content: space-between;
-
-            margin-bottom: 14px;
-        }
-
-        .section-title {
-            display: flex;
-
-            align-items: center;
-
-            gap: 8px;
-
-            font-size: 15px;
-
-            font-weight: 700;
-
-            color: #334155;
-        }
-
-        .section-title::before {
-            content: "";
-
-            width: 4px;
-            height: 18px;
-
-            border-radius: 10px;
-
-            background: #6366f1;
-        }
-
-        .section-badge {
-            font-size: 10px;
-
-            color: #64748b;
-
-            background: #f1f5f9;
-
-            padding: 5px 9px;
-
-            border-radius: 6px;
-        }
-
-
-        /* =========================================
-           TABLE
-        ========================================= */
-
-        .table-container {
-            overflow-x: auto;
-
-            border: 1px solid #e2e8f0;
-
-            border-radius: 12px;
-
-            background: white;
-        }
-
-        table {
-            width: 100%;
-
-            min-width: 900px;
-
-            border-collapse: separate;
-
-            border-spacing: 0;
-
-            font-size: 12px;
-        }
-
-        th {
-            background:
-                linear-gradient(
-                    135deg,
-                    #334155,
-                    #475569
-                );
-
-            color: white;
-
-            padding: 13px 10px;
-
-            text-align: right;
-
-            font-weight: 600;
-
-            font-size: 11px;
-
-            white-space: nowrap;
-        }
-
-        th:first-child {
-            text-align: left;
-
-            padding-left: 16px;
-        }
-
-        td {
-            padding: 12px 10px;
-
-            text-align: right;
-
-            color: #475569;
-
-            border-bottom:
-                1px solid #eef2f7;
-
-            white-space: nowrap;
-
-            font-variant-numeric:
-                tabular-nums;
-        }
-
-        td:first-child {
-            text-align: left;
-
-            padding-left: 16px;
-
-            font-weight: 600;
-
-            color: #334155;
-        }
-
-        tbody tr {
-            transition: background 0.15s ease;
-        }
-
-        tbody tr:nth-child(even) {
-            background: #fafbfc;
-        }
-
-        tbody tr:hover {
-            background: #f5f7ff;
-        }
-
-
-        /* Current Month */
-
-        .current-month {
-            background: #eef2ff !important;
-        }
-
-        .current-month td:first-child {
-            color: #4f46e5;
-        }
-
-        .current-badge {
-            display: inline-block;
-
-            margin-left: 5px;
-
-            padding: 2px 5px;
-
-            font-size: 8px;
-
-            font-weight: 700;
-
-            color: #4f46e5;
-
-            background: #e0e7ff;
-
-            border-radius: 4px;
-
-            vertical-align: middle;
-        }
-
-
-        /* Positive / Negative */
-
-        .positive {
-            color: #15803d !important;
-            font-weight: 700;
-        }
-
-        .negative {
-            color: #dc2626 !important;
-            font-weight: 700;
-        }
-
-
-        /* Total Row */
-
-        .total-row td {
-            background: #e2e8f0;
-
-            color: #1e293b;
-
-            font-weight: 700;
-
-            border-bottom: none;
-        }
-
-
-        /* =========================================
-           LOADING
-        ========================================= */
-
-        .loading {
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            gap: 9px;
-
-            padding: 22px;
-
-            color: #0284c7;
-
-            font-size: 12px;
-
-            font-weight: 600;
-        }
-
-        .spinner {
-            width: 17px;
-            height: 17px;
-
-            border: 2px solid #bae6fd;
-
-            border-top-color: #0284c7;
-
-            border-radius: 50%;
-
-            animation:
-                spin 0.8s linear infinite;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-
-        /* =========================================
-           ERROR
-        ========================================= */
-
-        .error-box {
-            display: none;
-
-            padding: 13px;
-
-            margin-bottom: 15px;
-
-            text-align: center;
-
-            border-radius: 9px;
-
-            color: #b91c1c;
-
-            background: #fef2f2;
-
-            border: 1px solid #fecaca;
-
-            font-size: 12px;
-
-            font-weight: 600;
-        }
-
-
-        /* =========================================
-           FOOTER
-        ========================================= */
-
-        .footer {
-            display: flex;
-
-            align-items: center;
-
-            justify-content: space-between;
-
-            margin-top: 15px;
-
-            font-size: 10px;
-
-            color: #94a3b8;
-        }
-
-
-        /* =========================================
-           RESPONSIVE
-        ========================================= */
-
-        @media (max-width: 950px) {
-
-            .card-grid {
-                grid-template-columns:
-                    repeat(2, 1fr);
-            }
-
-        }
-
-
-        @media (max-width: 600px) {
-
-            body {
-                padding: 12px;
-            }
-
-            .container {
-                margin: 8px auto;
-                border-radius: 16px;
-            }
-
-            .header {
-                padding: 20px;
-            }
-
-            .title-icon {
-                width: 42px;
-                height: 42px;
-                font-size: 20px;
-            }
-
-            .title-section h1 {
-                font-size: 18px;
-            }
-
-            .title-section p {
-                font-size: 10px;
-            }
-
-            .content {
-                padding: 20px 16px;
-            }
-
-            .filter-section {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 12px;
-            }
-
-            .year-select {
-                width: 100%;
-            }
-
-            .card-grid {
-                grid-template-columns:
-                    repeat(2, 1fr);
-
-                gap: 10px;
-            }
-
-            .card {
-                min-height: 115px;
-                padding: 14px;
-            }
-
-            .card .amount {
-                font-size: 16px;
-            }
-
-            .card-icon {
-                width: 32px;
-                height: 32px;
-                font-size: 14px;
-            }
-
-            .card-label {
-                font-size: 8px;
-            }
-
-            .card-subtitle {
-                display: none;
-            }
-
-            .section-badge {
-                display: none;
-            }
-
-            .footer {
-                flex-direction: column;
-                gap: 5px;
-                text-align: center;
-            }
-
-        }
-
-
-        @media (max-width: 430px) {
-
-            .header-top {
-                flex-direction: column;
-            }
-
-            .btn-entry {
-                width: 100%;
-                justify-content: center;
-            }
-
-        }
-
-    </style>
-
-</head>
-
-
-<body>
-
-
-<div class="container">
-
-
-    <!-- =====================================
-         HEADER
-    ===================================== -->
-
-    <div class="header">
-
-        <div class="header-top">
-
-            <div class="title-section">
-
-                <div class="title-icon">
-                    📊
-                </div>
-
-                <div>
-
-                    <h1>
-                        Financial Dashboard
-                    </h1>
-
-                    <p>
-                        Overview of your income, expenses & investments
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <a href="index.html" class="btn-entry">
-
-                ➕
-                New Entry
-
-            </a>
-
-        </div>
-
-    </div>
-
-
-
-    <!-- =====================================
-         CONTENT
-    ===================================== -->
-
-    <div class="content">
-
-
-        <!-- YEAR FILTER -->
-
-        <div class="filter-section">
-
-            <div class="filter-left">
-
-                <div class="filter-icon">
-                    📅
-                </div>
-
-                <div>
-
-                    <div class="filter-label">
-                        Financial Year
-                    </div>
-
-                    <div class="filter-description">
-                        Select year to view financial summary
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <select
-                id="yearFilter"
-                class="year-select"
-                onchange="fetchDashboardData()"
-            >
-
-                <option value="2026" selected>
-                    2026
-                </option>
-
-                <option value="2025">
-                    2025
-                </option>
-
-                <option value="2024">
-                    2024
-                </option>
-
-            </select>
-
-        </div>
-
-
-
-        <!-- ERROR MESSAGE -->
-
-        <div
-            id="errorMsg"
-            class="error-box"
-        >
-            Failed to load financial data.
-        </div>
-
-
-
-        <!-- =====================================
-             SUMMARY CARDS
-        ===================================== -->
-
-        <div class="card-grid">
-
-
-            <!-- INCOME -->
-
-            <div class="card card-income">
-
-                <div class="card-top">
-
-                    <div class="card-label">
-                        Total Income
-                    </div>
-
-                    <div class="card-icon">
-                        💰
-                    </div>
-
-                </div>
-
-                <div
-                    class="amount"
-                    id="cardIncome"
-                >
-                    ৳ 0.00
-                </div>
-
-                <div class="card-subtitle">
-                    Total income received
-                </div>
-
-            </div>
-
-
-
-            <!-- EXPENSE -->
-
-            <div class="card card-expense">
-
-                <div class="card-top">
-
-                    <div class="card-label">
-                        Total Expense
-                    </div>
-
-                    <div class="card-icon">
-                        💸
-                    </div>
-
-                </div>
-
-                <div
-                    class="amount"
-                    id="cardExpense"
-                >
-                    ৳ 0.00
-                </div>
-
-                <div class="card-subtitle">
-                    Total expenditure
-                </div>
-
-            </div>
-
-
-
-            <!-- SURPLUS -->
-
-            <div class="card card-surplus">
-
-                <div class="card-top">
-
-                    <div class="card-label">
-                        Net Surplus
-                    </div>
-
-                    <div class="card-icon">
-                        📈
-                    </div>
-
-                </div>
-
-                <div
-                    class="amount"
-                    id="cardSurplus"
-                >
-                    ৳ 0.00
-                </div>
-
-                <div class="card-subtitle">
-                    Income minus expense
-                </div>
-
-            </div>
-
-
-
-            <!-- INVESTMENT -->
-
-            <div class="card card-investment">
-
-                <div class="card-top">
-
-                    <div class="card-label">
-                        Total Investment
-                    </div>
-
-                    <div class="card-icon">
-                        🏦
-                    </div>
-
-                </div>
-
-                <div
-                    class="amount"
-                    id="cardInvestment"
-                >
-                    ৳ 0.00
-                </div>
-
-                <div class="card-subtitle">
-                    Total investment amount
-                </div>
-
-            </div>
-
-
-        </div>
-
-
-
-        <!-- =====================================
-             MONTHLY TABLE TITLE
-        ===================================== -->
-
-        <div class="section-header">
-
-            <div class="section-title">
-                Monthly Financial Breakdown
-            </div>
-
-            <div class="section-badge">
-                All amounts in BDT
-            </div>
-
-        </div>
-
-
-
-        <!-- LOADING MESSAGE -->
-
-        <div
-            id="loadingMsg"
-            class="loading"
-        >
-
-            <div class="spinner"></div>
-
-            <span>
-                Loading financial data...
-            </span>
-
-        </div>
-
-
-
-        <!-- =====================================
-             TABLE
-        ===================================== -->
-
-        <div class="table-container">
-
-            <table>
-
-                <thead>
-
-                    <tr>
-
-                        <th>Month</th>
-
-                        <th>Income</th>
-
-                        <th>Expense</th>
-
-                        <th>Surplus</th>
-
-                        <th>Investment</th>
-
-                        <th>Loan / Transfer</th>
-
-                        <th>Asset</th>
-
-                        <th>Liability</th>
-
-                    </tr>
-
-                </thead>
-
-
-                <tbody
-                    id="tableBody"
-                >
-                </tbody>
-
-
-                <tfoot>
-
-                    <tr
-                        class="total-row"
-                        id="tableTotal"
-                    >
-                    </tr>
-
-                </tfoot>
-
-            </table>
-
-        </div>
-
-
-
-        <!-- FOOTER -->
-
-        <div class="footer">
-
-            <span>
-                💾 Data source: Google Sheets
-            </span>
-
-            <span id="lastUpdated">
-                —
-            </span>
-
-        </div>
-
-
-    </div>
-
-
-</div>
-
-
-
-<!-- =====================================
-     JAVASCRIPT
-===================================== -->
-
 <script>
 
+const scriptURL = 'https://script.google.com/macros/s/AKfycbyjf9eQuTWzXa7wazCLlZR1iHLm7Cj2E4X2WjkC9SvwgwxcgTqc0pnlzZBDTN_S47tJ/exec';
 
-/* =========================================
-   GOOGLE APPS SCRIPT URL
-========================================= */
-
-const scriptURL =
-'https://script.google.com/macros/s/AKfycbyjf9eQuTWzXa7wazCLlZR1iHLm7Cj2E4X2WjkC9SvwgwxcgTqc0pnlzZBDTN_S47tJ/exec';
-
-
-
-/* =========================================
-   MONTH LIST
-========================================= */
 
 const months = [
-
     "January",
     "February",
     "March",
@@ -1209,151 +16,166 @@ const months = [
     "October",
     "November",
     "December"
-
 ];
 
 
 
-/* =========================================
-   FORMAT AMOUNT
-========================================= */
-
 function formatAmount(value) {
 
-    const number =
-        parseFloat(value) || 0;
+    const number = Number(value) || 0;
 
-    return number.toLocaleString(
-        'en-BD',
-        {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        }
-    );
-
-}
-
-
-
-/* =========================================
-   FETCH DASHBOARD DATA
-
-   ORIGINAL WORKING LOGIC PRESERVED
-========================================= */
-
-function fetchDashboardData() {
-
-    const year =
-        document.getElementById(
-            'yearFilter'
-        ).value;
-
-
-    const loading =
-        document.getElementById(
-            'loadingMsg'
-        );
-
-
-    const error =
-        document.getElementById(
-            'errorMsg'
-        );
-
-
-    /* Show loading */
-
-    loading.style.display = 'flex';
-
-
-    error.style.display = 'none';
-
-
-    console.log(
-        "Fetching data for year:",
-        year
-    );
-
-
-    fetch(
-        `${scriptURL}?year=${year}`
-    )
-
-    .then(res => res.json())
-
-    .then(data => {
-
-
-        console.log(
-            "Dashboard Response:",
-            data
-        );
-
-
-        loading.style.display =
-            'none';
-
-
-        /* Important:
-           This matches your ORIGINAL code */
-
-        renderDashboard(
-            data.summary
-        );
-
-
-    })
-
-    .catch(err => {
-
-
-        console.error(
-            "Dashboard Error:",
-            err
-        );
-
-
-        loading.style.display =
-            'none';
-
-
-        error.style.display =
-            'block';
-
-
-        error.innerHTML =
-            '⚠ Failed to load financial data. Please try again.';
-
-
+    return number.toLocaleString('en-BD', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
     });
 
 }
 
 
 
-/* =========================================
-   RENDER DASHBOARD
-========================================= */
+function fetchDashboardData() {
+
+    const year = document.getElementById('yearFilter').value;
+
+    console.log("Fetching data for year:", year);
+
+
+    const loadingMsg =
+        document.getElementById('loadingMsg');
+
+
+    if (loadingMsg) {
+
+        loadingMsg.style.display = 'block';
+
+        loadingMsg.innerText = 'Loading Data...';
+
+    }
+
+
+    fetch(scriptURL + '?year=' + year)
+
+        .then(function(response) {
+
+            if (!response.ok) {
+
+                throw new Error(
+                    'HTTP Error: ' + response.status
+                );
+
+            }
+
+            return response.json();
+
+        })
+
+
+        .then(function(data) {
+
+            console.log(
+                "Dashboard Response:",
+                data
+            );
+
+
+            if (loadingMsg) {
+
+                loadingMsg.style.display = 'none';
+
+            }
+
+
+            if (!data) {
+
+                throw new Error(
+                    "No data received from server"
+                );
+
+            }
+
+
+            if (!data.summary) {
+
+                throw new Error(
+                    "Summary data not found"
+                );
+
+            }
+
+
+            renderDashboard(data.summary);
+
+        })
+
+
+        .catch(function(error) {
+
+            console.error(
+                "Dashboard Error:",
+                error
+            );
+
+
+            if (loadingMsg) {
+
+                loadingMsg.style.display = 'block';
+
+                loadingMsg.innerHTML =
+                    '⚠ Failed to load data.<br>' +
+                    '<small>' +
+                    error.message +
+                    '</small>';
+
+            }
+
+        });
+
+}
+
+
+
 
 function renderDashboard(summary) {
 
 
+    console.log(
+        "Rendering Summary:",
+        summary
+    );
+
+
     const tbody =
-        document.getElementById(
-            'tableBody'
-        );
+        document.getElementById('tableBody');
 
 
     const tfoot =
-        document.getElementById(
-            'tableTotal'
+        document.getElementById('tableTotal');
+
+
+    if (!tbody) {
+
+        console.error(
+            "ERROR: tableBody not found"
         );
+
+        return;
+
+    }
+
+
+    if (!tfoot) {
+
+        console.error(
+            "ERROR: tableTotal not found"
+        );
+
+        return;
+
+    }
 
 
     tbody.innerHTML = '';
 
-
-    /* Totals */
 
     let totals = {
 
@@ -1368,95 +190,51 @@ function renderDashboard(summary) {
     };
 
 
-    /* Selected Year */
 
-    const selectedYear =
-        Number(
-            document.getElementById(
-                'yearFilter'
-            ).value
-        );
+    months.forEach(function(month) {
 
 
-    /* Current Date */
+        const d = summary[month] || {
 
-    const currentYear =
-        new Date().getFullYear();
+            Income: 0,
+            Expense: 0,
+            Investment: 0,
+            Loan: 0,
+            Asset: 0,
+            Liability: 0,
+            Surplus: 0
 
+        };
 
-    const currentMonth =
-        new Date().toLocaleString(
-            'en-US',
-            {
-                month: 'long'
-            }
-        );
-
-
-
-    /* =====================================
-       LOOP THROUGH MONTHS
-    ===================================== */
-
-    months.forEach(month => {
-
-
-        /*
-        Get data safely.
-
-        Your original code assumes:
-        summary[month]
-
-        We preserve that structure.
-        */
-
-        const d =
-            summary[month] || {
-
-                Income: 0,
-                Expense: 0,
-                Surplus: 0,
-                Investment: 0,
-                Loan: 0,
-                Asset: 0,
-                Liability: 0
-
-            };
-
-
-
-        /* Convert Values */
 
         const income =
-            parseFloat(d.Income) || 0;
+            Number(d.Income) || 0;
 
 
         const expense =
-            parseFloat(d.Expense) || 0;
+            Number(d.Expense) || 0;
 
 
         const surplus =
-            parseFloat(d.Surplus) || 0;
+            Number(d.Surplus) || 0;
 
 
         const investment =
-            parseFloat(d.Investment) || 0;
+            Number(d.Investment) || 0;
 
 
         const loan =
-            parseFloat(d.Loan) || 0;
+            Number(d.Loan) || 0;
 
 
         const asset =
-            parseFloat(d.Asset) || 0;
+            Number(d.Asset) || 0;
 
 
         const liability =
-            parseFloat(d.Liability) || 0;
+            Number(d.Liability) || 0;
 
 
-
-        /* Add Totals */
 
         totals.Income += income;
 
@@ -1474,106 +252,30 @@ function renderDashboard(summary) {
 
 
 
-        /* Create Row */
-
         const row =
             document.createElement('tr');
 
 
 
-        /* Highlight Current Month */
-
-        const isCurrentMonth =
-
-            selectedYear === currentYear &&
-
-            month === currentMonth;
-
-
-
-        if (isCurrentMonth) {
-
-            row.classList.add(
-                'current-month'
-            );
-
-        }
-
-
-
-        /* Surplus Color */
-
-        let surplusClass = '';
-
-
-        if (surplus > 0) {
-
-            surplusClass =
-                'positive';
-
-        }
-
-        else if (surplus < 0) {
-
-            surplusClass =
-                'negative';
-
-        }
-
-
-
-        /* Row Data */
-
         row.innerHTML = `
 
-            <td>
+            <td>${month}</td>
 
-                ${month}
+            <td>৳ ${formatAmount(income)}</td>
 
-                ${isCurrentMonth
+            <td>৳ ${formatAmount(expense)}</td>
 
-                    ? '<span class="current-badge">CURRENT</span>'
-
-                    : ''
-
-                }
-
-            </td>
-
-
-            <td>
-                ৳ ${formatAmount(income)}
-            </td>
-
-
-            <td>
-                ৳ ${formatAmount(expense)}
-            </td>
-
-
-            <td class="${surplusClass}">
+            <td class="${surplus < 0 ? 'negative' : 'positive'}">
                 ৳ ${formatAmount(surplus)}
             </td>
 
+            <td>৳ ${formatAmount(investment)}</td>
 
-            <td>
-                ৳ ${formatAmount(investment)}
-            </td>
+            <td>৳ ${formatAmount(loan)}</td>
 
+            <td>৳ ${formatAmount(asset)}</td>
 
-            <td>
-                ৳ ${formatAmount(loan)}
-            </td>
-
-
-            <td>
-                ৳ ${formatAmount(asset)}
-            </td>
-
-
-            <td>
-                ৳ ${formatAmount(liability)}
-            </td>
+            <td>৳ ${formatAmount(liability)}</td>
 
         `;
 
@@ -1585,92 +287,97 @@ function renderDashboard(summary) {
 
 
 
-    /* =====================================
+    /* =================================
        UPDATE SUMMARY CARDS
-    ===================================== */
+    ================================= */
 
 
-    document.getElementById(
-        'cardIncome'
-    ).innerText =
-
-        `৳ ${formatAmount(
-            totals.Income
-        )}`;
+    const cardIncome =
+        document.getElementById('cardIncome');
 
 
+    const cardExpense =
+        document.getElementById('cardExpense');
 
-    document.getElementById(
-        'cardExpense'
-    ).innerText =
 
-        `৳ ${formatAmount(
-            totals.Expense
-        )}`;
+    const cardSurplus =
+        document.getElementById('cardSurplus');
+
+
+    const cardInvestment =
+        document.getElementById('cardInvestment');
 
 
 
-    document.getElementById(
-        'cardSurplus'
-    ).innerText =
+    if (cardIncome) {
 
-        `৳ ${formatAmount(
-            totals.Surplus
-        )}`;
+        cardIncome.innerText =
+            '৳ ' +
+            formatAmount(totals.Income);
 
-
-
-    document.getElementById(
-        'cardInvestment'
-    ).innerText =
-
-        `৳ ${formatAmount(
-            totals.Investment
-        )}`;
+    }
 
 
+    if (cardExpense) {
 
-    /* =====================================
-       TOTAL SUMMARY ROW
-    ===================================== */
+        cardExpense.innerText =
+            '৳ ' +
+            formatAmount(totals.Expense);
+
+    }
+
+
+    if (cardSurplus) {
+
+        cardSurplus.innerText =
+            '৳ ' +
+            formatAmount(totals.Surplus);
+
+    }
+
+
+    if (cardInvestment) {
+
+        cardInvestment.innerText =
+            '৳ ' +
+            formatAmount(totals.Investment);
+
+    }
+
+
+
+    /* =================================
+       TOTAL ROW
+    ================================= */
 
 
     tfoot.innerHTML = `
 
-        <td>
-            Total Summary
-        </td>
-
+        <td>Total Summary</td>
 
         <td>
             ৳ ${formatAmount(totals.Income)}
         </td>
 
-
         <td>
             ৳ ${formatAmount(totals.Expense)}
         </td>
-
 
         <td>
             ৳ ${formatAmount(totals.Surplus)}
         </td>
 
-
         <td>
             ৳ ${formatAmount(totals.Investment)}
         </td>
-
 
         <td>
             ৳ ${formatAmount(totals.Loan)}
         </td>
 
-
         <td>
             ৳ ${formatAmount(totals.Asset)}
         </td>
-
 
         <td>
             ৳ ${formatAmount(totals.Liability)}
@@ -1680,45 +387,31 @@ function renderDashboard(summary) {
 
 
 
-    /* =====================================
-       LAST UPDATED
-    ===================================== */
-
-
-    const now =
-        new Date();
-
-
-    document.getElementById(
-        'lastUpdated'
-    ).innerText =
-
-        'Last updated: ' +
-
-        now.toLocaleString(
-            'en-BD',
-            {
-                dateStyle: 'medium',
-                timeStyle: 'short'
-            }
-        );
+    console.log(
+        "Dashboard rendered successfully"
+    );
 
 
 }
 
 
 
-/* =========================================
-   INITIAL LOAD
-========================================= */
+/* =================================
+   LOAD DASHBOARD
+================================= */
 
-fetchDashboardData();
 
+document.addEventListener(
+    'DOMContentLoaded',
+    function() {
+
+        console.log(
+            "Dashboard initialized"
+        );
+
+        fetchDashboardData();
+
+    }
+);
 
 </script>
-
-
-</body>
-
-</html>
-```
