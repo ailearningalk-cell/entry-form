@@ -2,10 +2,8 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Financial Dashboard</title>
 
     <!-- Google Font -->
@@ -14,11 +12,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
-
-        /* =====================================================
-           GLOBAL & VARIABLES
-        ===================================================== */
-
         :root {
             --primary: #6366f1;
             --primary-hover: #4f46e5;
@@ -53,11 +46,6 @@
             justify-content: center;
         }
 
-
-        /* =====================================================
-           MAIN CONTAINER (Same as index.html)
-        ===================================================== */
-
         .container {
             width: 100%;
             max-width: 1150px;
@@ -69,11 +57,6 @@
             border: 1px solid rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(20px);
         }
-
-
-        /* =====================================================
-           HEADER (Same as index.html)
-        ===================================================== */
 
         .header {
             background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
@@ -161,19 +144,9 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
-
-        /* =====================================================
-           CONTENT AREA
-        ===================================================== */
-
         .content {
             padding: 36px;
         }
-
-
-        /* =====================================================
-           YEAR FILTER
-        ===================================================== */
 
         .filter-section {
             display: flex;
@@ -249,11 +222,6 @@
             border-color: var(--primary);
             box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
         }
-
-
-        /* =====================================================
-           KPI CARDS
-        ===================================================== */
 
         .card-grid {
             display: grid;
@@ -332,27 +300,10 @@
             font-weight: 500;
         }
 
-        /* Original Color Palette Styles */
-        .card-income {
-            background: linear-gradient(135deg, #1b4965, #25617f);
-        }
-
-        .card-expense {
-            background: linear-gradient(135deg, #b7094c, #d01a61);
-        }
-
-        .card-surplus {
-            background: linear-gradient(135deg, #15803d, #22a05a);
-        }
-
-        .card-investment {
-            background: linear-gradient(135deg, #087f5b, #25a97b);
-        }
-
-
-        /* =====================================================
-           TABLE SECTION
-        ===================================================== */
+        .card-income { background: linear-gradient(135deg, #1b4965, #25617f); }
+        .card-expense { background: linear-gradient(135deg, #b7094c, #d01a61); }
+        .card-surplus { background: linear-gradient(135deg, #15803d, #22a05a); }
+        .card-investment { background: linear-gradient(135deg, #087f5b, #25a97b); }
 
         .section-header {
             display: flex;
@@ -389,11 +340,6 @@
             border-radius: var(--radius-sm);
             border: 1px solid var(--border-color);
         }
-
-
-        /* =====================================================
-           TABLE
-        ===================================================== */
 
         .table-container {
             overflow-x: auto;
@@ -444,31 +390,12 @@
             color: #334155;
         }
 
-        tbody tr {
-            transition: background 0.15s ease;
-        }
+        tbody tr:hover { background: #f5f7ff; }
+        tbody tr:nth-child(even) { background: #fafbfc; }
+        tbody tr:nth-child(even):hover { background: #f5f7ff; }
 
-        tbody tr:hover {
-            background: #f5f7ff;
-        }
-
-        tbody tr:nth-child(even) {
-            background: #fafbfc;
-        }
-
-        tbody tr:nth-child(even):hover {
-            background: #f5f7ff;
-        }
-
-        /* Current month */
-
-        .current-month {
-            background: #eef2ff !important;
-        }
-
-        .current-month td:first-child {
-            color: var(--primary);
-        }
+        .current-month { background: #eef2ff !important; }
+        .current-month td:first-child { color: var(--primary); }
 
         .current-badge {
             display: inline-block;
@@ -483,19 +410,8 @@
             letter-spacing: 0.5px;
         }
 
-        /* Surplus */
-
-        .positive {
-            color: #15803d !important;
-            font-weight: 700;
-        }
-
-        .negative {
-            color: #dc2626 !important;
-            font-weight: 700;
-        }
-
-        /* Total */
+        .positive { color: #15803d !important; font-weight: 700; }
+        .negative { color: #dc2626 !important; font-weight: 700; }
 
         .total-row td {
             background: #e2e8f0;
@@ -506,11 +422,6 @@
             border-bottom: none;
             padding: 16px 12px;
         }
-
-
-        /* =====================================================
-           LOADING & ERROR
-        ===================================================== */
 
         .loading {
             display: flex;
@@ -549,11 +460,6 @@
             font-weight: 700;
         }
 
-
-        /* =====================================================
-           FOOTER
-        ===================================================== */
-
         .footer {
             display: flex;
             align-items: center;
@@ -564,135 +470,43 @@
             font-weight: 600;
         }
 
-
-        /* =====================================================
-           MOBILE
-        ===================================================== */
-
         @media (max-width: 900px) {
-            .card-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
+            .card-grid { grid-template-columns: repeat(2, 1fr); }
         }
 
         @media (max-width: 600px) {
-            body {
-                padding: 12px;
-            }
-
-            .container {
-                border-radius: 20px;
-            }
-
-            .header {
-                padding: 24px 20px;
-            }
-
-            .header-top {
-                align-items: flex-start;
-            }
-
-            .title-section h1 {
-                font-size: 19px;
-            }
-
-            .title-section p {
-                font-size: 12px;
-            }
-
-            .content {
-                padding: 24px 20px;
-            }
-
-            .filter-section {
-                align-items: flex-start;
-                flex-direction: column;
-                gap: 14px;
-            }
-
-            .year-select {
-                width: 100%;
-            }
-
-            .card-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 12px;
-            }
-
-            .card {
-                min-height: 115px;
-                padding: 14px;
-            }
-
-            .card .amount {
-                font-size: 17px;
-            }
-
-            .card-icon {
-                width: 32px;
-                height: 32px;
-                font-size: 14px;
-            }
-
-            .card-label {
-                font-size: 8px;
-            }
-
-            .card-subtitle {
-                display: none;
-            }
-
-            .section-header {
-                align-items: flex-start;
-                gap: 10px;
-            }
-
-            .section-badge {
-                display: none;
-            }
-
-            .footer {
-                flex-direction: column;
-                gap: 8px;
-            }
-
-            .btn-entry {
-                padding: 8px 12px;
-                font-size: 12px;
-            }
+            body { padding: 12px; }
+            .container { border-radius: 20px; }
+            .header { padding: 24px 20px; }
+            .header-top { align-items: flex-start; }
+            .title-section h1 { font-size: 19px; }
+            .title-section p { font-size: 12px; }
+            .content { padding: 24px 20px; }
+            .filter-section { align-items: flex-start; flex-direction: column; gap: 14px; }
+            .year-select { width: 100%; }
+            .card-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .card { min-height: 115px; padding: 14px; }
+            .card .amount { font-size: 17px; }
+            .card-icon { width: 32px; height: 32px; font-size: 14px; }
+            .card-label { font-size: 8px; }
+            .card-subtitle { display: none; }
+            .section-header { align-items: flex-start; gap: 10px; }
+            .section-badge { display: none; }
+            .footer { flex-direction: column; gap: 8px; }
+            .btn-entry { padding: 8px 12px; font-size: 12px; }
         }
 
         @media (max-width: 420px) {
-            .header-top {
-                flex-direction: column;
-                gap: 16px;
-            }
-
-            .btn-entry {
-                align-self: stretch;
-                justify-content: center;
-            }
-
-            .title-section {
-                width: 100%;
-            }
-
-            .card-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .card .amount {
-                font-size: 20px;
-            }
+            .header-top { flex-direction: column; gap: 16px; }
+            .btn-entry { align-self: stretch; justify-content: center; }
+            .title-section { width: 100%; }
+            .card-grid { grid-template-columns: 1fr; }
+            .card .amount { font-size: 20px; }
         }
-
     </style>
-
 </head>
 
-
 <body>
-
 
 <div class="container">
 
@@ -711,7 +525,6 @@
             </a>
         </div>
     </div>
-
 
     <!-- CONTENT -->
     <div class="content">
@@ -733,21 +546,16 @@
             </select>
         </div>
 
-
         <!-- ERROR -->
         <div id="errorMsg" class="error-box">
             ✕ Failed to load financial data. Please try again.
         </div>
 
-
         <!-- KPI CARDS -->
         <div class="card-grid">
-
             <div class="card card-income">
                 <div class="card-top">
-                    <div>
-                        <div class="card-label">Total Income</div>
-                    </div>
+                    <div class="card-label">Total Income</div>
                     <div class="card-icon">💰</div>
                 </div>
                 <div class="amount" id="cardIncome">৳ 0.00</div>
@@ -756,9 +564,7 @@
 
             <div class="card card-expense">
                 <div class="card-top">
-                    <div>
-                        <div class="card-label">Total Expense</div>
-                    </div>
+                    <div class="card-label">Total Expense</div>
                     <div class="card-icon">💸</div>
                 </div>
                 <div class="amount" id="cardExpense">৳ 0.00</div>
@@ -767,9 +573,7 @@
 
             <div class="card card-surplus">
                 <div class="card-top">
-                    <div>
-                        <div class="card-label">Net Surplus</div>
-                    </div>
+                    <div class="card-label">Net Surplus</div>
                     <div class="card-icon">📈</div>
                 </div>
                 <div class="amount" id="cardSurplus">৳ 0.00</div>
@@ -778,17 +582,13 @@
 
             <div class="card card-investment">
                 <div class="card-top">
-                    <div>
-                        <div class="card-label">Total Investment</div>
-                    </div>
+                    <div class="card-label">Total Investment</div>
                     <div class="card-icon">🏦</div>
                 </div>
                 <div class="amount" id="cardInvestment">৳ 0.00</div>
                 <div class="card-subtitle">Total investment amount</div>
             </div>
-
         </div>
-
 
         <!-- MONTHLY BREAKDOWN -->
         <div class="section-header">
@@ -796,13 +596,11 @@
             <div class="section-badge">All amounts in BDT</div>
         </div>
 
-
         <!-- LOADING -->
         <div id="loadingMsg" class="loading">
             <div class="spinner"></div>
             <span>Loading financial data...</span>
         </div>
-
 
         <!-- TABLE -->
         <div class="table-container">
@@ -828,7 +626,6 @@
             </table>
         </div>
 
-
         <!-- FOOTER -->
         <div class="footer">
             <span>💾 Data source: Google Sheets</span>
@@ -839,9 +636,7 @@
 
 </div>
 
-
 <script>
-
     const scriptURL = 'https://script.google.com/macros/s/AKfycbyjf9eQuTWzXa7wazCLlZR1iHLm7Cj2E4X2WjkC9SvwgwxcgTqc0pnlzZBDTN_S47tJ/exec';
 
     const months = [
@@ -865,17 +660,25 @@
         loading.style.display = 'flex';
         error.style.display = 'none';
 
-        fetch(`${scriptURL}?year=${year}`)
+        // Redirect Mode explicitly specified for Apps Script
+        fetch(`${scriptURL}?year=${year}`, {
+            method: 'GET',
+            redirect: 'follow'
+        })
         .then(res => {
             if (!res.ok) throw new Error('Network response failed');
             return res.json();
         })
         .then(data => {
             loading.style.display = 'none';
-            renderDashboard(data.summary, year);
+            if (data && data.summary) {
+                renderDashboard(data.summary, year);
+            } else {
+                throw new Error('Invalid data format received');
+            }
         })
         .catch(err => {
-            console.error(err);
+            console.error('Fetch error:', err);
             loading.style.display = 'none';
             error.style.display = 'block';
         });
@@ -891,7 +694,6 @@
             Loan: 0, Asset: 0, Liability: 0
         };
 
-        // Check if selected year is current year
         const now = new Date();
         const realCurrentYear = now.getFullYear().toString();
         const realCurrentMonth = now.toLocaleString('en-US', { month: 'long' });
@@ -910,7 +712,6 @@
             totals.Asset += Number(d.Asset) || 0;
             totals.Liability += Number(d.Liability) || 0;
 
-            // Show CURRENT badge ONLY if selected year matches real current year
             const isCurrent = (selectedYear === realCurrentYear) && (month === realCurrentMonth);
 
             const row = document.createElement('tr');
@@ -967,7 +768,6 @@
     }
 
     fetchDashboardData();
-
 </script>
 
 </body>
