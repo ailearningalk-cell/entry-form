@@ -16,7 +16,7 @@
     <style>
 
         /* =====================================================
-           GLOBAL
+           GLOBAL & VARIABLES
         ===================================================== */
 
         :root {
@@ -48,11 +48,14 @@
             min-height: 100vh;
             color: var(--text-main);
             padding: 40px 16px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
         }
 
 
         /* =====================================================
-           MAIN CONTAINER
+           MAIN CONTAINER (Same as index.html)
         ===================================================== */
 
         .container {
@@ -69,7 +72,7 @@
 
 
         /* =====================================================
-           HEADER
+           HEADER (Same as index.html)
         ===================================================== */
 
         .header {
@@ -134,8 +137,6 @@
             color: rgba(255, 255, 255, 0.85);
             font-weight: 500;
         }
-
-        /* Navigation button */
 
         .btn-entry {
             display: inline-flex;
@@ -264,8 +265,8 @@
         .card {
             position: relative;
             overflow: hidden;
-            min-height: 135px;
-            padding: 22px;
+            min-height: 130px;
+            padding: 20px;
             border-radius: var(--radius-md);
             color: white;
             box-shadow: 0 10px 20px -5px rgba(15, 23, 42, 0.08);
@@ -280,10 +281,10 @@
         .card::after {
             content: "";
             position: absolute;
-            width: 120px;
-            height: 120px;
-            right: -30px;
-            bottom: -40px;
+            width: 110px;
+            height: 110px;
+            right: -25px;
+            bottom: -35px;
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.12);
             pointer-events: none;
@@ -293,12 +294,12 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 14px;
+            margin-bottom: 12px;
         }
 
         .card-icon {
-            width: 42px;
-            height: 42px;
+            width: 40px;
+            height: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -318,7 +319,7 @@
         }
 
         .card .amount {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 800;
             letter-spacing: -0.5px;
             line-height: 1.1;
@@ -327,24 +328,25 @@
         .card-subtitle {
             font-size: 11px;
             margin-top: 6px;
-            opacity: 0.8;
+            opacity: 0.85;
             font-weight: 500;
         }
 
+        /* Original Color Palette Styles */
         .card-income {
-            background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+            background: linear-gradient(135deg, #1b4965, #25617f);
         }
 
         .card-expense {
-            background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+            background: linear-gradient(135deg, #b7094c, #d01a61);
         }
 
         .card-surplus {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            background: linear-gradient(135deg, #15803d, #22a05a);
         }
 
         .card-investment {
-            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            background: linear-gradient(135deg, #087f5b, #25a97b);
         }
 
 
@@ -409,15 +411,15 @@
         }
 
         th {
-            background: #1e293b;
-            color: #f8fafc;
-            padding: 16px 12px;
+            background: linear-gradient(135deg, #334155, #475569);
+            color: #ffffff;
+            padding: 14px 12px;
             text-align: right;
             font-weight: 700;
             font-size: 12px;
             letter-spacing: 0.3px;
             white-space: nowrap;
-            border-bottom: 2px solid #0f172a;
+            border-bottom: 1px solid #334155;
         }
 
         th:first-child {
@@ -426,9 +428,9 @@
         }
 
         td {
-            padding: 14px 12px;
+            padding: 13px 12px;
             text-align: right;
-            color: #334155;
+            color: #475569;
             border-bottom: 1px solid #f1f5f9;
             white-space: nowrap;
             font-weight: 600;
@@ -439,7 +441,7 @@
             text-align: left;
             padding-left: 20px;
             font-weight: 700;
-            color: var(--text-main);
+            color: #334155;
         }
 
         tbody tr {
@@ -447,15 +449,15 @@
         }
 
         tbody tr:hover {
-            background: #f8fafc;
+            background: #f5f7ff;
         }
 
         tbody tr:nth-child(even) {
-            background: #fcfcfd;
+            background: #fafbfc;
         }
 
         tbody tr:nth-child(even):hover {
-            background: #f8fafc;
+            background: #f5f7ff;
         }
 
         /* Current month */
@@ -484,20 +486,20 @@
         /* Surplus */
 
         .positive {
-            color: #059669 !important;
+            color: #15803d !important;
             font-weight: 700;
         }
 
         .negative {
-            color: #e11d48 !important;
+            color: #dc2626 !important;
             font-weight: 700;
         }
 
         /* Total */
 
         .total-row td {
-            background: #f1f5f9;
-            color: #0f172a;
+            background: #e2e8f0;
+            color: #1e293b;
             font-weight: 800;
             font-size: 13.5px;
             border-top: 2px solid #cbd5e1;
@@ -507,7 +509,7 @@
 
 
         /* =====================================================
-           LOADING
+           LOADING & ERROR
         ===================================================== */
 
         .loading {
@@ -531,15 +533,8 @@
         }
 
         @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
+            to { transform: rotate(360deg); }
         }
-
-
-        /* =====================================================
-           ERROR
-        ===================================================== */
 
         .error-box {
             display: none;
@@ -581,7 +576,6 @@
         }
 
         @media (max-width: 600px) {
-
             body {
                 padding: 12px;
             }
@@ -626,22 +620,22 @@
             }
 
             .card {
-                min-height: 120px;
-                padding: 16px;
+                min-height: 115px;
+                padding: 14px;
             }
 
             .card .amount {
-                font-size: 18px;
+                font-size: 17px;
             }
 
             .card-icon {
-                width: 36px;
-                height: 36px;
-                font-size: 15px;
+                width: 32px;
+                height: 32px;
+                font-size: 14px;
             }
 
             .card-label {
-                font-size: 9px;
+                font-size: 8px;
             }
 
             .card-subtitle {
@@ -669,7 +663,6 @@
         }
 
         @media (max-width: 420px) {
-
             .header-top {
                 flex-direction: column;
                 gap: 16px;
@@ -703,375 +696,144 @@
 
 <div class="container">
 
-
-    <!-- =====================================================
-         HEADER
-    ===================================================== -->
-
+    <!-- HEADER -->
     <div class="header">
-
         <div class="header-top">
-
             <div class="title-section">
-
-                <div class="title-icon">
-                    📊
-                </div>
-
+                <div class="title-icon">📊</div>
                 <div>
-
-                    <h1>
-                        Financial Dashboard
-                    </h1>
-
-                    <p>
-                        Overview of your income, expenses & investments
-                    </p>
-
+                    <h1>Financial Dashboard</h1>
+                    <p>Overview of your income, expenses & investments</p>
                 </div>
-
             </div>
-
-
-            <a
-                href="index.html"
-                class="btn-entry"
-            >
-                ➕
-                <span>New Entry</span>
+            <a href="index.html" class="btn-entry">
+                ➕ <span>New Entry</span>
             </a>
-
         </div>
-
     </div>
 
 
-    <!-- =====================================================
-         CONTENT
-    ===================================================== -->
-
+    <!-- CONTENT -->
     <div class="content">
 
-
         <!-- YEAR FILTER -->
-
         <div class="filter-section">
-
             <div class="filter-left">
-
-                <div class="filter-icon">
-                    📅
-                </div>
-
+                <div class="filter-icon">📅</div>
                 <div>
-
-                    <div class="filter-label">
-                        Financial Year
-                    </div>
-
-                    <div class="filter-description">
-                        Select a year to view financial summary
-                    </div>
-
+                    <div class="filter-label">Financial Year</div>
+                    <div class="filter-description">Select a year to view financial summary</div>
                 </div>
-
             </div>
 
-
-            <select
-                id="yearFilter"
-                class="year-select"
-                onchange="fetchDashboardData()"
-            >
-
-                <option value="2026" selected>
-                    2026
-                </option>
-
-                <option value="2025">
-                    2025
-                </option>
-
-                <option value="2024">
-                    2024
-                </option>
-
+            <select id="yearFilter" class="year-select" onchange="fetchDashboardData()">
+                <option value="2026" selected>2026</option>
+                <option value="2025">2025</option>
+                <option value="2024">2024</option>
             </select>
-
         </div>
 
 
         <!-- ERROR -->
-
-        <div
-            id="errorMsg"
-            class="error-box"
-        >
+        <div id="errorMsg" class="error-box">
             ✕ Failed to load financial data. Please try again.
         </div>
 
 
-        <!-- =================================================
-             KPI CARDS
-        ================================================= -->
-
+        <!-- KPI CARDS -->
         <div class="card-grid">
 
-
-            <!-- INCOME -->
-
             <div class="card card-income">
-
                 <div class="card-top">
-
                     <div>
-
-                        <div class="card-label">
-                            Total Income
-                        </div>
-
+                        <div class="card-label">Total Income</div>
                     </div>
-
-                    <div class="card-icon">
-                        💰
-                    </div>
-
+                    <div class="card-icon">💰</div>
                 </div>
-
-                <div
-                    class="amount"
-                    id="cardIncome"
-                >
-                    ৳ 0.00
-                </div>
-
-                <div class="card-subtitle">
-                    Total income received
-                </div>
-
+                <div class="amount" id="cardIncome">৳ 0.00</div>
+                <div class="card-subtitle">Total income received</div>
             </div>
-
-
-            <!-- EXPENSE -->
 
             <div class="card card-expense">
-
                 <div class="card-top">
-
                     <div>
-
-                        <div class="card-label">
-                            Total Expense
-                        </div>
-
+                        <div class="card-label">Total Expense</div>
                     </div>
-
-                    <div class="card-icon">
-                        💸
-                    </div>
-
+                    <div class="card-icon">💸</div>
                 </div>
-
-                <div
-                    class="amount"
-                    id="cardExpense"
-                >
-                    ৳ 0.00
-                </div>
-
-                <div class="card-subtitle">
-                    Total expenditure
-                </div>
-
+                <div class="amount" id="cardExpense">৳ 0.00</div>
+                <div class="card-subtitle">Total expenditure</div>
             </div>
-
-
-            <!-- SURPLUS -->
 
             <div class="card card-surplus">
-
                 <div class="card-top">
-
                     <div>
-
-                        <div class="card-label">
-                            Net Surplus
-                        </div>
-
+                        <div class="card-label">Net Surplus</div>
                     </div>
-
-                    <div class="card-icon">
-                        📈
-                    </div>
-
+                    <div class="card-icon">📈</div>
                 </div>
-
-                <div
-                    class="amount"
-                    id="cardSurplus"
-                >
-                    ৳ 0.00
-                </div>
-
-                <div class="card-subtitle">
-                    Income minus expense
-                </div>
-
+                <div class="amount" id="cardSurplus">৳ 0.00</div>
+                <div class="card-subtitle">Income minus expense</div>
             </div>
-
-
-            <!-- INVESTMENT -->
 
             <div class="card card-investment">
-
                 <div class="card-top">
-
                     <div>
-
-                        <div class="card-label">
-                            Total Investment
-                        </div>
-
+                        <div class="card-label">Total Investment</div>
                     </div>
-
-                    <div class="card-icon">
-                        🏦
-                    </div>
-
+                    <div class="card-icon">🏦</div>
                 </div>
-
-                <div
-                    class="amount"
-                    id="cardInvestment"
-                >
-                    ৳ 0.00
-                </div>
-
-                <div class="card-subtitle">
-                    Total investment amount
-                </div>
-
+                <div class="amount" id="cardInvestment">৳ 0.00</div>
+                <div class="card-subtitle">Total investment amount</div>
             </div>
-
 
         </div>
 
 
-        <!-- =================================================
-             MONTHLY BREAKDOWN
-        ================================================= -->
-
+        <!-- MONTHLY BREAKDOWN -->
         <div class="section-header">
-
-            <div class="section-title">
-                Monthly Financial Breakdown
-            </div>
-
-            <div class="section-badge">
-                All amounts in BDT
-            </div>
-
+            <div class="section-title">Monthly Financial Breakdown</div>
+            <div class="section-badge">All amounts in BDT</div>
         </div>
 
 
         <!-- LOADING -->
-
-        <div
-            id="loadingMsg"
-            class="loading"
-        >
-
+        <div id="loadingMsg" class="loading">
             <div class="spinner"></div>
-
-            <span>
-                Loading financial data...
-            </span>
-
+            <span>Loading financial data...</span>
         </div>
 
 
         <!-- TABLE -->
-
         <div class="table-container">
-
             <table>
-
                 <thead>
-
                     <tr>
-
-                        <th>
-                            Month
-                        </th>
-
-                        <th>
-                            Income
-                        </th>
-
-                        <th>
-                            Expense
-                        </th>
-
-                        <th>
-                            Surplus
-                        </th>
-
-                        <th>
-                            Investment
-                        </th>
-
-                        <th>
-                            Loan / Transfer
-                        </th>
-
-                        <th>
-                            Asset
-                        </th>
-
-                        <th>
-                            Liability
-                        </th>
-
+                        <th>Month</th>
+                        <th>Income</th>
+                        <th>Expense</th>
+                        <th>Surplus</th>
+                        <th>Investment</th>
+                        <th>Loan / Transfer</th>
+                        <th>Asset</th>
+                        <th>Liability</th>
                     </tr>
-
                 </thead>
 
-
-                <tbody
-                    id="tableBody"
-                >
-                </tbody>
-
+                <tbody id="tableBody"></tbody>
 
                 <tfoot>
-
-                    <tr
-                        class="total-row"
-                        id="tableTotal"
-                    >
-                    </tr>
-
+                    <tr class="total-row" id="tableTotal"></tr>
                 </tfoot>
-
             </table>
-
         </div>
 
 
         <!-- FOOTER -->
-
         <div class="footer">
-
-            <span>
-                💾 Data source: Google Sheets
-            </span>
-
-            <span id="lastUpdated">
-                —
-            </span>
-
+            <span>💾 Data source: Google Sheets</span>
+            <span id="lastUpdated">—</span>
         </div>
-
 
     </div>
 
@@ -1080,455 +842,131 @@
 
 <script>
 
-
-    /* =====================================================
-       GOOGLE APPS SCRIPT URL
-    ===================================================== */
-
-    const scriptURL =
-        'https://script.google.com/macros/s/AKfycbyjf9eQuTWzXa7wazCLlZR1iHLm7Cj2E4X2WjkC9SvwgwxcgTqc0pnlzZBDTN_S47tJ/exec';
-
-
-    /* =====================================================
-       MONTHS
-    ===================================================== */
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbyjf9eQuTWzXa7wazCLlZR1iHLm7Cj2E4X2WjkC9SvwgwxcgTqc0pnlzZBDTN_S47tJ/exec';
 
     const months = [
-
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December"
-
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
     ];
 
-
-    /* =====================================================
-       NUMBER FORMAT
-    ===================================================== */
-
     function formatAmount(value) {
-
-        const number =
-            Number(value) || 0;
-
-        return number.toLocaleString(
-            'en-BD',
-            {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            }
-        );
-
+        const number = Number(value) || 0;
+        return number.toLocaleString('en-BD', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
     }
-
-
-    /* =====================================================
-       FETCH DASHBOARD DATA
-    ===================================================== */
 
     function fetchDashboardData() {
+        const year = document.getElementById('yearFilter').value;
+        const loading = document.getElementById('loadingMsg');
+        const error = document.getElementById('errorMsg');
 
-        const year =
-            document.getElementById(
-                'yearFilter'
-            ).value;
+        loading.style.display = 'flex';
+        error.style.display = 'none';
 
-
-        const loading =
-            document.getElementById(
-                'loadingMsg'
-            );
-
-
-        const error =
-            document.getElementById(
-                'errorMsg'
-            );
-
-
-        loading.style.display =
-            'flex';
-
-
-        error.style.display =
-            'none';
-
-
-        fetch(
-            `${scriptURL}?year=${year}`
-        )
-
-        .then(
-            res => {
-
-                if (!res.ok) {
-
-                    throw new Error(
-                        'Network response failed'
-                    );
-
-                }
-
-                return res.json();
-
-            }
-        )
-
-        .then(
-            data => {
-
-                loading.style.display =
-                    'none';
-
-                renderDashboard(
-                    data.summary
-                );
-
-            }
-        )
-
-        .catch(
-            err => {
-
-                console.error(err);
-
-                loading.style.display =
-                    'none';
-
-                error.style.display =
-                    'block';
-
-            }
-        );
-
+        fetch(`${scriptURL}?year=${year}`)
+        .then(res => {
+            if (!res.ok) throw new Error('Network response failed');
+            return res.json();
+        })
+        .then(data => {
+            loading.style.display = 'none';
+            renderDashboard(data.summary, year);
+        })
+        .catch(err => {
+            console.error(err);
+            loading.style.display = 'none';
+            error.style.display = 'block';
+        });
     }
 
-
-    /* =====================================================
-       RENDER DASHBOARD
-    ===================================================== */
-
-    function renderDashboard(summary) {
-
-        const tbody =
-            document.getElementById(
-                'tableBody'
-            );
-
-
-        const tfoot =
-            document.getElementById(
-                'tableTotal'
-            );
-
-
-        tbody.innerHTML =
-            '';
-
-
-        /* Totals */
+    function renderDashboard(summary, selectedYear) {
+        const tbody = document.getElementById('tableBody');
+        const tfoot = document.getElementById('tableTotal');
+        tbody.innerHTML = '';
 
         let totals = {
-
-            Income: 0,
-
-            Expense: 0,
-
-            Surplus: 0,
-
-            Investment: 0,
-
-            Loan: 0,
-
-            Asset: 0,
-
-            Liability: 0
-
+            Income: 0, Expense: 0, Surplus: 0, Investment: 0,
+            Loan: 0, Asset: 0, Liability: 0
         };
 
+        // Check if selected year is current year
+        const now = new Date();
+        const realCurrentYear = now.getFullYear().toString();
+        const realCurrentMonth = now.toLocaleString('en-US', { month: 'long' });
 
-        /* Current month */
+        months.forEach(month => {
+            const d = summary[month] || {
+                Income: 0, Expense: 0, Surplus: 0, Investment: 0,
+                Loan: 0, Asset: 0, Liability: 0
+            };
 
-        const currentMonth =
-            new Date()
-            .toLocaleString(
-                'en-US',
-                {
-                    month: 'long'
-                }
-            );
+            totals.Income += Number(d.Income) || 0;
+            totals.Expense += Number(d.Expense) || 0;
+            totals.Surplus += Number(d.Surplus) || 0;
+            totals.Investment += Number(d.Investment) || 0;
+            totals.Loan += Number(d.Loan) || 0;
+            totals.Asset += Number(d.Asset) || 0;
+            totals.Liability += Number(d.Liability) || 0;
 
+            // Show CURRENT badge ONLY if selected year matches real current year
+            const isCurrent = (selectedYear === realCurrentYear) && (month === realCurrentMonth);
 
-        /* =================================================
-           MONTH ROWS
-        ================================================= */
-
-        months.forEach(
-            month => {
-
-
-                const d =
-                    summary[month] || {
-
-                        Income: 0,
-
-                        Expense: 0,
-
-                        Surplus: 0,
-
-                        Investment: 0,
-
-                        Loan: 0,
-
-                        Asset: 0,
-
-                        Liability: 0
-
-                    };
-
-
-                /* Totals */
-
-                totals.Income +=
-                    Number(d.Income) || 0;
-
-                totals.Expense +=
-                    Number(d.Expense) || 0;
-
-                totals.Surplus +=
-                    Number(d.Surplus) || 0;
-
-                totals.Investment +=
-                    Number(d.Investment) || 0;
-
-                totals.Loan +=
-                    Number(d.Loan) || 0;
-
-                totals.Asset +=
-                    Number(d.Asset) || 0;
-
-                totals.Liability +=
-                    Number(d.Liability) || 0;
-
-
-                /* Current month */
-
-                const isCurrent =
-                    month === currentMonth;
-
-
-                const row =
-                    document.createElement(
-                        'tr'
-                    );
-
-
-                if (isCurrent) {
-
-                    row.classList.add(
-                        'current-month'
-                    );
-
-                }
-
-
-                /* Surplus class */
-
-                let surplusClass =
-                    '';
-
-
-                if (
-                    Number(d.Surplus) > 0
-                ) {
-
-                    surplusClass =
-                        'positive';
-
-                }
-
-                else if (
-                    Number(d.Surplus) < 0
-                ) {
-
-                    surplusClass =
-                        'negative';
-
-                }
-
-
-                row.innerHTML = `
-
-                    <td>
-
-                        ${month}
-
-                        ${
-                            isCurrent
-                            ?
-                            '<span class="current-badge">CURRENT</span>'
-                            :
-                            ''
-                        }
-
-                    </td>
-
-                    <td>
-                        ৳ ${formatAmount(d.Income)}
-                    </td>
-
-                    <td>
-                        ৳ ${formatAmount(d.Expense)}
-                    </td>
-
-                    <td class="${surplusClass}">
-                        ৳ ${formatAmount(d.Surplus)}
-                    </td>
-
-                    <td>
-                        ৳ ${formatAmount(d.Investment)}
-                    </td>
-
-                    <td>
-                        ৳ ${formatAmount(d.Loan)}
-                    </td>
-
-                    <td>
-                        ৳ ${formatAmount(d.Asset)}
-                    </td>
-
-                    <td>
-                        ৳ ${formatAmount(d.Liability)}
-                    </td>
-
-                `;
-
-
-                tbody.appendChild(
-                    row
-                );
-
+            const row = document.createElement('tr');
+            if (isCurrent) {
+                row.classList.add('current-month');
             }
-        );
 
+            let surplusClass = '';
+            if (Number(d.Surplus) > 0) surplusClass = 'positive';
+            else if (Number(d.Surplus) < 0) surplusClass = 'negative';
 
-        /* =================================================
-           KPI CARDS
-        ================================================= */
+            row.innerHTML = `
+                <td>
+                    ${month}
+                    ${isCurrent ? '<span class="current-badge">CURRENT</span>' : ''}
+                </td>
+                <td>৳ ${formatAmount(d.Income)}</td>
+                <td>৳ ${formatAmount(d.Expense)}</td>
+                <td class="${surplusClass}">৳ ${formatAmount(d.Surplus)}</td>
+                <td>৳ ${formatAmount(d.Investment)}</td>
+                <td>৳ ${formatAmount(d.Loan)}</td>
+                <td>৳ ${formatAmount(d.Asset)}</td>
+                <td>৳ ${formatAmount(d.Liability)}</td>
+            `;
 
-        document.getElementById(
-            'cardIncome'
-        ).innerText =
-            `৳ ${formatAmount(totals.Income)}`;
+            tbody.appendChild(row);
+        });
 
+        /* KPI CARDS */
+        document.getElementById('cardIncome').innerText = `৳ ${formatAmount(totals.Income)}`;
+        document.getElementById('cardExpense').innerText = `৳ ${formatAmount(totals.Expense)}`;
+        document.getElementById('cardSurplus').innerText = `৳ ${formatAmount(totals.Surplus)}`;
+        document.getElementById('cardInvestment').innerText = `৳ ${formatAmount(totals.Investment)}`;
 
-        document.getElementById(
-            'cardExpense'
-        ).innerText =
-            `৳ ${formatAmount(totals.Expense)}`;
-
-
-        document.getElementById(
-            'cardSurplus'
-        ).innerText =
-            `৳ ${formatAmount(totals.Surplus)}`;
-
-
-        document.getElementById(
-            'cardInvestment'
-        ).innerText =
-            `৳ ${formatAmount(totals.Investment)}`;
-
-
-        /* =================================================
-           TOTAL ROW
-        ================================================= */
-
-        let totalSurplusClass =
-            '';
-
-
-        if (totals.Surplus > 0) {
-
-            totalSurplusClass =
-                'positive';
-
-        }
-
-        else if (totals.Surplus < 0) {
-
-            totalSurplusClass =
-                'negative';
-
-        }
-
+        /* TOTAL ROW */
+        let totalSurplusClass = '';
+        if (totals.Surplus > 0) totalSurplusClass = 'positive';
+        else if (totals.Surplus < 0) totalSurplusClass = 'negative';
 
         tfoot.innerHTML = `
-
-            <td>
-                Total
-            </td>
-
-            <td>
-                ৳ ${formatAmount(totals.Income)}
-            </td>
-
-            <td>
-                ৳ ${formatAmount(totals.Expense)}
-            </td>
-
-            <td class="${totalSurplusClass}">
-                ৳ ${formatAmount(totals.Surplus)}
-            </td>
-
-            <td>
-                ৳ ${formatAmount(totals.Investment)}
-            </td>
-
-            <td>
-                ৳ ${formatAmount(totals.Loan)}
-            </td>
-
-            <td>
-                ৳ ${formatAmount(totals.Asset)}
-            </td>
-
-            <td>
-                ৳ ${formatAmount(totals.Liability)}
-            </td>
-
+            <td>Total</td>
+            <td>৳ ${formatAmount(totals.Income)}</td>
+            <td>৳ ${formatAmount(totals.Expense)}</td>
+            <td class="${totalSurplusClass}">৳ ${formatAmount(totals.Surplus)}</td>
+            <td>৳ ${formatAmount(totals.Investment)}</td>
+            <td>৳ ${formatAmount(totals.Loan)}</td>
+            <td>৳ ${formatAmount(totals.Asset)}</td>
+            <td>৳ ${formatAmount(totals.Liability)}</td>
         `;
 
-
-        /* =================================================
-           LAST UPDATED
-        ================================================= */
-
-        const now = new Date();
-
-        document.getElementById(
-            'lastUpdated'
-        ).innerText =
+        /* LAST UPDATED */
+        document.getElementById('lastUpdated').innerText =
             `Last updated: ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
-
     }
 
-
-    /* =====================================================
-       INITIAL LOAD
-    ===================================================== */
-
     fetchDashboardData();
-
 
 </script>
 
