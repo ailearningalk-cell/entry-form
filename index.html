@@ -243,7 +243,7 @@
 
     const subCategoriesMap = {
         'Income': ['Salary', 'Business', 'Freelancing', 'Bonus', 'Dividend', 'Others'],
-        'Expense': ['Food & Grocery', 'House Rent', 'Utility Bills', 'Transportation', 'Entertainment', 'Shopping', 'Medical', 'Education', 'Others'],
+        'Expense': ['Food', 'House Rent', 'Utility Bills', 'Transportation', 'Entertainment', 'Shopping', 'Medical', 'Education', 'Others'],
         'Investment': ['Stocks/Shares', 'Mutual Funds', 'Fixed Deposit (FDR)', 'DPS', 'Real Estate', 'Crypto', 'Gold'],
         'Loan/Transfer': ['Given Loan', 'Repaid Loan', 'Bank Transfer', 'Mobile Banking Transfer'],
         'Asset': ['Property Purchase', 'Vehicle', 'Electronics', 'Gold Purchase'],
@@ -252,7 +252,7 @@
 
     let formattedBackendDate = "";
 
-    // Flatpickr তারিখ সিলেক্টর কনফিগারেশন
+    // Flatpickr সেটআপ
     const fp = flatpickr("#date", {
         dateFormat: "Y-m-d",
         defaultDate: new Date(),
@@ -261,17 +261,16 @@
         }
     });
 
-    // শুরুতে আজকের তারিখ সেট করা
-    setBackendDate(new Date());
-
+    // ইনিশিয়াল ডেট ফরম্যাটিং
     function setBackendDate(dateObj) {
         const year = dateObj.getFullYear();
         const month = String(dateObj.getMonth() + 1).padStart(2, '0');
         const day = String(dateObj.getDate()).padStart(2, '0');
         formattedBackendDate = `${year}-${month}-${day}`;
     }
+    setBackendDate(new Date());
 
-    // টাইপ সিলেক্ট করলে সাব-ক্যাটাগরি অপশন আপডেট করার ফাংশন
+    // সাব-ক্যাটাগরি আপডেট করার ফাংশন
     function updateSubCategories() {
         const typeSelect = document.getElementById("transactionType");
         const subSelect = document.getElementById("subCategory");
@@ -293,7 +292,7 @@
         }
     }
 
-    // ফর্ম সাবমিট হ্যান্ডলার
+    // ফর্ম সাবমিশন
     const form = document.getElementById('entryForm');
     const submitBtn = document.getElementById('submitBtn');
     const statusMsg = document.getElementById('statusMsg');
