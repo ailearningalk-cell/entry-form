@@ -88,8 +88,8 @@ tfoot td:first-child{background:#e6e9fb}
 .two{display:grid;gap:14px;grid-template-columns:minmax(0,1fr)!important}
 .pos{color:var(--mint)}.neg{color:var(--coral)}
 .acc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
-.acc{padding:18px;cursor:pointer;text-align:left;font-family:inherit;color:inherit;transition:transform .2s;position:relative}
-.acc:hover{transform:translateY(-3px)}
+.acc{padding:18px;cursor:pointer;text-align:left;font-family:inherit;color:inherit;transition:transform .2s;position:relative;outline:none}
+.acc:hover,.acc:focus-visible{transform:translateY(-3px)}
 .acc .ic{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;color:#fff;font-size:18px;margin-bottom:14px}
 .acc .n{font-weight:600;font-size:14px;color:var(--mute)}
 .acc .v{font-size:20px;font-weight:700;margin-top:2px}
@@ -112,6 +112,7 @@ tfoot td:first-child{background:#e6e9fb}
 .share i{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--violet));border-radius:8px}
 .share-l{font-size:12px;color:var(--mute);margin-top:6px}
 .empty{padding:30px;text-align:center;color:var(--mute)}
+.warn-item{padding:10px 0;border-bottom:1px dashed #dde2ef;font-size:13px;line-height:1.5}
 .txn-list{display:flex;flex-direction:column;gap:10px}
 .txn-item{display:flex;justify-content:space-between;align-items:center;padding:14px;background:#fff;border-radius:16px;box-shadow:0 4px 12px rgba(0,0,0,0.04);gap:10px}
 .txn-left{display:flex;align-items:center;gap:12px;min-width:0}
@@ -161,6 +162,7 @@ tfoot td:first-child{background:#e6e9fb}
 .edit-btn{flex:1;height:52px;border:none;border-radius:14px;font:700 15px 'Hind Siliguri',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
 .edit-btn.cancel{background:#eef1f8;color:var(--ink)}
 .edit-btn.save{background:linear-gradient(135deg,var(--blue),var(--violet));color:#fff;box-shadow:0 10px 22px rgba(51,71,255,.25)}
+.edit-btn:disabled{opacity:.6;cursor:not-allowed}
 .form-container{width:100%;max-width:1120px;margin:0 auto}
 .form-card-outer{width:100%;padding:24px;border-radius:26px}
 .form-layout{display:flex;flex-direction:column;gap:14px}
@@ -212,8 +214,9 @@ select:disabled{opacity:.5;cursor:not-allowed;background:rgba(255,255,255,.4)}
 .pagination button{width:36px;height:36px;border:none;border-radius:8px;background:#eef1f8;color:var(--ink);font-weight:700;cursor:pointer}
 .pagination button.on{background:var(--blue);color:#fff}
 .pagination button:disabled{opacity:.4;cursor:not-allowed}
-.refresh-btn{width:36px;height:36px;border:none;border-radius:50%;background:#eef1f8;color:var(--ink);cursor:pointer;display:grid;place-items:center;font-size:14px;transition:.2s}
+.refresh-btn{width:36px;height:36px;border:none;border-radius:50%;background:#eef1f8;color:var(--ink);cursor:pointer;display:grid;place-items:center;font-size:14px;transition:.2s;flex-shrink:0}
 .refresh-btn:hover{background:#e0e5ff}
+.refresh-btn.warn{background:#fff3d6;color:#b45309}
 .refresh-btn.spin i{animation:spin .8s linear infinite}
 @keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
 .mini-loader{position:fixed;top:14px;right:14px;z-index:70;background:#101a33;color:#fff;padding:10px 16px;border-radius:12px;font-size:13px;font-weight:600;display:none;align-items:center;gap:8px;box-shadow:0 10px 30px rgba(0,0,0,.2)}
@@ -259,7 +262,8 @@ select:disabled{opacity:.5;cursor:not-allowed;background:rgba(255,255,255,.4)}
         <button data-v="entry" onclick="showView('entry')"><i class="fa-solid fa-circle-plus"></i>নতুন এন্ট্রি</button>
       </nav>
       <div class="spacer"></div>
-      <select id="yearFilter" onchange="fetchDashboardData()" aria-label="আর্থিক বছর" style="height:36px;border-radius:10px;padding:0 10px;font-size:13px;background:#eef1f8;border:1px solid #dde2ef;font-family:inherit"></select>
+      <select id="yearFilter" onchange="fetchDashboardData()" aria-label="আর্থিক বছর" style="height:36px;border-radius:10px;padding:0 10px;font-size:13px;background:#eef1f8;border:1px solid #dde2ef;font-family:inherit;width:auto"></select>
+      <button class="refresh-btn warn" id="warnBtn" title="সতর্কতা দেখুন" style="display:none" onclick="showWarnings()"><i class="fa-solid fa-triangle-exclamation"></i></button>
       <button class="refresh-btn" id="refreshBtn" title="রিফ্রেশ" onclick="refreshAll(true)"><i class="fa-solid fa-rotate"></i></button>
     </div>
   </header>
@@ -297,7 +301,7 @@ select:disabled{opacity:.5;cursor:not-allowed;background:rgba(255,255,255,.4)}
 
       <div class="two" style="margin-top:14px">
         <div class="card glass"><h3>ক্যাশফ্লো ট্রেন্ড <span>আয় বনাম ব্যয়</span></h3><div class="chart-box"><canvas id="cashChart"></canvas></div></div>
-        <div class="card glass"><h3>আয়-ব্যয় অনুপাত <span class="month-nav"><button onclick="ratioPrev()" aria-label="আগের মাস"><i class="fa-solid fa-chevron-left"></i></button><span id="ratioMonthLabel">—</span><button onclick="ratioNext()" aria-label="পরের মাস"><i class="fa-solid fa-chevron-right"></i></button></span></h3><div class="chart-box sm"><canvas id="ratioChart"></canvas><div id="ratioEmpty" style="display:none;position:absolute;inset:0;display:none;align-items:center;justify-content:center;font-size:13px;color:var(--mute);text-align:center;pointer-events:none"></div></div></div>
+        <div class="card glass"><h3>আয়-ব্যয় অনুপাত <span class="month-nav"><button onclick="ratioPrev()" aria-label="আগের মাস"><i class="fa-solid fa-chevron-left"></i></button><span id="ratioMonthLabel">—</span><button onclick="ratioNext()" aria-label="পরের মাস"><i class="fa-solid fa-chevron-right"></i></button></span></h3><div class="chart-box sm"><canvas id="ratioChart"></canvas><div id="ratioEmpty" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;font-size:13px;color:var(--mute);text-align:center;pointer-events:none;padding:0 20px"></div></div></div>
       </div>
 
       <div class="two" style="margin-top:14px">
@@ -390,8 +394,8 @@ select:disabled{opacity:.5;cursor:not-allowed;background:rgba(255,255,255,.4)}
             <div class="field" id="repayDirectionGroup" style="display:none">
               <label><i class="fa-solid fa-arrows-left-right"></i>দিক <span class="required">*</span></label>
               <div class="radio-group">
-                <label><input type="radio" name="repayDir" value="paid" checked> আমি দিলাম</label>
-                <label><input type="radio" name="repayDir" value="received"> আমি পেলাম</label>
+                <label><input type="radio" name="repayDir" value="paid" checked onchange="onRepayDirChange()"> আমি দিলাম</label>
+                <label><input type="radio" name="repayDir" value="received" onchange="onRepayDirChange()"> আমি পেলাম</label>
               </div>
             </div>
             <div class="field" id="borrowerGroup" style="display:none">
@@ -458,19 +462,21 @@ select:disabled{opacity:.5;cursor:not-allowed;background:rgba(255,255,255,.4)}
 <script>
 const scriptURL = 'https://script.google.com/macros/s/AKfycbx4-cSXpg7Zb-zaWsBf6-YenF-6NHDd2SKmUjlZIsWum9knC0NkNtfXWoXHsLUrPTWfwQ/exec';
 const bnMonths = ["জানুয়ারি","ফেব্রুয়ারি","মার্চ","এপ্রিল","মে","জুন","জুলাই","আগস্ট","সেপ্টেম্বর","অক্টোবর","নভেম্বর","ডিসেম্বর"];
-const bnMonthsShort = ["জানু","ফেব","মার্চ","এপ্রিল","মে","জুন","জুলাই","আগস্ট","সেপ্ট","অক্টো","নভে","ডিসে"];
 const enMonths = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 const enMonthsShort = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
-// কেন্দ্রীয় উপ-খাত (Code.js-এর সাথে মিলে)
+// ইউনিকোড-নিরাপদ তুলনা (শিটের "য়" ইত্যাদির ভিন্ন কোডপয়েন্ট একই ধরা হয়)
+const nfc = s => String(s == null ? '' : s).normalize('NFC').trim();
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+const T = { INCOME:nfc('আয়'), EXPENSE:nfc('ব্যয়'), INVEST:nfc('বিনিয়োগ'), TRANSFER:nfc('স্থানান্তর'), LOAN:nfc('ঋণ'), ASSET:nfc('সম্পদ'), LIAB:nfc('দায়') };
 const SUBCATS = {
-  LOAN_GIVE: "ঋণ/ধার প্রদান",
-  LOAN_TAKE: "ঋণ/ধার গ্রহণ",
-  LOAN_REPAY: "ঋণ/ধার পরিশোধ",
-  CARD_DUE: "ক্রেডিট কার্ড বিল",
-  CARD_PAY: "কার্ড বিল পরিশোধ"
+  LOAN_GIVE: nfc("ঋণ/ধার প্রদান"),
+  LOAN_TAKE: nfc("ঋণ/ধার গ্রহণ"),
+  LOAN_REPAY: nfc("ঋণ/ধার পরিশোধ"),
+  CARD_DUE: nfc("ক্রেডিট কার্ড বিল"),
+  CARD_PAY: nfc("কার্ড বিল পরিশোধ")
 };
-function normSub(s){ return String(s||'').trim(); }
 
 let balanceVisible = false, realBalanceValue = 0;
 
@@ -488,8 +494,11 @@ function showToast(message, type){
   const container = document.getElementById('toastContainer');
   const toast = document.createElement('div');
   toast.className = 'toast ' + (type||'success');
-  const icon = type==='error' ? 'fa-circle-exclamation' : (type==='info' ? 'fa-circle-info' : 'fa-circle-check');
-  toast.innerHTML = `<i class="fa-solid ${icon}"></i> ${message}`;
+  const i = document.createElement('i');
+  i.className = 'fa-solid ' + (type==='error' ? 'fa-circle-exclamation' : (type==='info' ? 'fa-circle-info' : 'fa-circle-check'));
+  const sp = document.createElement('span');
+  sp.textContent = message; // textContent — HTML ইনজেকশন নেই
+  toast.appendChild(i); toast.appendChild(sp);
   container.appendChild(toast);
   setTimeout(()=>{ toast.remove(); }, 3000);
 }
@@ -516,11 +525,46 @@ function showView(v){
 }
 
 // ==========================================
-// ডেটা রিফ্রেশ (S2)
+// নেটওয়ার্ক + ঐচ্ছিক অ্যাক্সেস কোড
+// (সার্ভারে API_TOKEN সেট থাকলে অ্যাপ প্রথমবার কোড চায়; কোড ব্রাউজারেই থাকে, কোডে নয়)
 // ==========================================
+const TOKEN_KEY = 'hisab_token';
+function getToken(){ try { return localStorage.getItem(TOKEN_KEY) || ''; } catch(e){ return ''; } }
+function setToken(t){ try { localStorage.setItem(TOKEN_KEY, t); } catch(e){} }
+let tokenDeclinedAt = 0;
+function askToken(usedToken){
+  if (getToken() !== usedToken) return true;           // অন্য রিকোয়েস্ট ইতিমধ্যে নতুন কোড বসিয়েছে
+  if (Date.now() - tokenDeclinedAt < 5000) return false;
+  const t = prompt('অ্যাক্সেস কোড দিন:');
+  if (!t){ tokenDeclinedAt = Date.now(); return false; }
+  setToken(t.trim());
+  return true;
+}
 const tsParam = () => '&_ts=' + Date.now();
-const fetchNoStore = (url) => fetch(url, { cache: 'no-store' });
 
+async function callGet(qs){
+  for (let attempt = 0; attempt < 3; attempt++){
+    const used = getToken();
+    const r = await fetch(scriptURL + '?' + qs + tsParam() + '&token=' + encodeURIComponent(used), { cache:'no-store' }).then(x=>x.json());
+    if (r && r.error === 'UNAUTHORIZED'){ if (askToken(used)) continue; throw new Error('অ্যাক্সেস কোড প্রয়োজন'); }
+    return r;
+  }
+  throw new Error('অ্যাক্সেস কোড সঠিক নয়');
+}
+async function callPost(formData){
+  for (let attempt = 0; attempt < 3; attempt++){
+    const used = getToken();
+    formData.set('token', used);
+    const r = await fetch(scriptURL, { method:'POST', body: formData }).then(x=>x.json());
+    if (r && r.error === 'UNAUTHORIZED'){ if (askToken(used)) continue; throw new Error('অ্যাক্সেস কোড প্রয়োজন'); }
+    return r;
+  }
+  throw new Error('অ্যাক্সেস কোড সঠিক নয়');
+}
+
+// ==========================================
+// ডেটা রিফ্রেশ
+// ==========================================
 let currentSummary = null;
 let currentLoans = { receivables: [], payables: [] };
 let currentTransactions = [];
@@ -542,7 +586,6 @@ window.onload = function(){
   document.addEventListener('visibilitychange', ()=>{
     if (!document.hidden && Date.now() - lastRefreshAt > 60*1000) refreshAll();
   });
-  // A11: horizontal scroll হলে জোর করে 0
   window.addEventListener('scroll', ()=>{
     if (window.scrollX !== 0) window.scrollTo(0, window.scrollY);
   }, {passive:true});
@@ -562,10 +605,10 @@ async function refreshAll(showLoader){
 
   try {
     const [dash, loan, txns, master] = await Promise.all([
-      fetchNoStore(scriptURL + '?year=' + year + tsParam()).then(r=>r.json()),
-      fetchNoStore(scriptURL + '?action=getLoanSummary' + tsParam()).then(r=>r.json()),
-      fetchNoStore(scriptURL + '?action=getTransactionsList' + tsParam()).then(r=>r.json()),
-      fetchNoStore(scriptURL + '?action=getMasterData' + tsParam()).then(r=>r.json())
+      callGet('year=' + year),
+      callGet('action=getLoanSummary'),
+      callGet('action=getTransactionsList'),
+      callGet('action=getMasterData')
     ]);
     if (dash.error) throw new Error(dash.error);
     if (loan.error) throw new Error(loan.error);
@@ -576,6 +619,8 @@ async function refreshAll(showLoader){
     currentLoans = { receivables: loan.receivables || [], payables: loan.payables || [] };
     currentTransactions = txns.transactions || [];
     currentWarnings = [].concat(dash.warnings||[], loan.warnings||[], txns.warnings||[], master.warnings||[]);
+    // একই বার্তা একবারই
+    currentWarnings = currentWarnings.filter((w,i,a)=>a.indexOf(w)===i);
 
     if (master && !master.error){
       masterData = master;
@@ -588,17 +633,16 @@ async function refreshAll(showLoader){
     renderCharts(dash.summary, dash.accounts);
     renderNetWorthCard(dash);
     if (document.body.dataset.view === 'reports') renderReportPage();
-    if (document.body.dataset.view === 'accounts') renderAccountGrid(dash.accounts);
 
     skeleton.style.display = 'none';
     content.style.display = 'block';
     errorMsg.style.display = 'none';
     lastRefreshAt = Date.now();
 
-    if (currentWarnings.length && firstLoad){
-      showToast('সতর্কতা: ' + currentWarnings.length + 'টি', 'info');
-      console.warn('Warnings:', currentWarnings);
-    }
+    const wb = document.getElementById('warnBtn');
+    wb.style.display = currentWarnings.length ? 'grid' : 'none';
+    wb.title = 'সতর্কতা (' + currentWarnings.length + 'টি)';
+    if (currentWarnings.length && firstLoad) showToast('সতর্কতা: ' + currentWarnings.length + 'টি — উপরের ⚠ বোতাম চাপুন', 'info');
   } catch(err){
     console.error(err);
     skeleton.style.display = 'none';
@@ -610,22 +654,36 @@ async function refreshAll(showLoader){
   }
 }
 
-// পুরোনো ফাংশন-নাম রাখা (এক্সটার্নাল কল)
 function fetchDashboardData(){ refreshAll(); }
+
+function showWarnings(){
+  let html = '<div class="sheet-h"><div class="ic" style="background:#f59e0b"><i class="fa-solid fa-triangle-exclamation"></i></div><b>সতর্কতা (' + currentWarnings.length + ')</b><button onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button></div>';
+  if (!currentWarnings.length) html += '<div class="empty">কোনো সতর্কতা নেই</div>';
+  else currentWarnings.forEach(w => { html += '<div class="warn-item">• ' + esc(w) + '</div>'; });
+  document.getElementById('sheet').innerHTML = html;
+  document.getElementById('modal').classList.add('show');
+}
 
 function renderNetWorthCard(data){
   document.getElementById('netWorthValue').innerText = formatAmount(data.netWorth || 0);
   document.getElementById('totalAssets').innerText = formatAmount(data.totalAssets || 0);
 }
 
+const isLiquid = acc => acc && (acc.type==='Cash'||acc.type==='Bank'||acc.type==='Wallet');
+function liquidTotalPositive(accounts){
+  return (accounts||[]).reduce((s,a)=> s + (isLiquid(a) ? Math.max(0, Number(a.currentBalance)||0) : 0), 0);
+}
+function accPercent(acc, accounts){
+  if (!isLiquid(acc)) return 0;
+  const total = liquidTotalPositive(accounts);
+  return total>0 ? (Math.max(0, Number(acc.currentBalance)||0) / total * 100) : 0;
+}
+
 function renderKPI(summary, accounts){
   let totalIncome=0, totalExpense=0, totalInvestment=0;
   if (summary){ enMonths.forEach(m=>{ const d = summary[m]||{}; totalIncome+=Number(d.Income)||0; totalExpense+=Number(d.Expense)||0; totalInvestment+=Number(d.Investment)||0; }); }
-  // D3: মোট ব্যালেন্স = Cash+Bank+Wallet
   let totalBalance = 0;
-  (accounts||[]).forEach(acc=>{
-    if (acc.type==='Cash'||acc.type==='Bank'||acc.type==='Wallet') totalBalance += Number(acc.currentBalance)||0;
-  });
+  (accounts||[]).forEach(acc=>{ if (isLiquid(acc)) totalBalance += Number(acc.currentBalance)||0; });
   realBalanceValue = totalBalance;
   document.getElementById('cardIncome').innerText = formatAmount(totalIncome);
   document.getElementById('cardExpense').innerText = formatAmount(totalExpense);
@@ -638,7 +696,7 @@ function renderKPI(summary, accounts){
   document.getElementById('ringArc').style.strokeDashoffset = 238.76 * (1 - rate/100);
 }
 
-// B4: শেষ ৩ মাস — selected year ধরে; অন্য বছরে ডিসেম্বর থেকে পেছনে
+// শেষ ৩ মাস — নির্বাচিত বছরের ভেতরেই (জানুয়ারিতে আগের/পরের বছরের ফাঁকা মাস আসে না)
 function renderMonthlyTable(summary){
   const tbody = document.getElementById('monthlyTableBody');
   const tfoot = document.getElementById('monthlyTableTotal');
@@ -646,21 +704,19 @@ function renderMonthlyTable(summary){
   let totals = { Income:0, Expense:0, Surplus:0, Investment:0, Loan:0, Asset:0, Liability:0 };
   const selYear = parseInt(document.getElementById('yearFilter').value);
   const now = new Date();
-  let endIdx;
-  if (selYear === now.getFullYear()) endIdx = now.getMonth();
-  else endIdx = 11;
-  const last3 = [];
-  for (let i=0; i<3; i++) last3.push((endIdx - i + 12) % 12);
-  last3.forEach((idx)=>{
+  const endIdx = (selYear === now.getFullYear()) ? now.getMonth() : 11;
+  const idxs = [];
+  for (let i=0; i<3 && endIdx - i >= 0; i++) idxs.push(endIdx - i);
+  idxs.forEach((idx)=>{
     const month = enMonths[idx];
     const d = summary && summary[month] ? summary[month] : { Income:0, Expense:0, Surplus:0, Investment:0, Loan:0, Asset:0, Liability:0 };
     Object.keys(totals).forEach(k=> totals[k] += Number(d[k])||0);
     const row = document.createElement('tr');
-    let sCls = (Number(d.Surplus)>0)?'pos':(Number(d.Surplus)<0?'neg':'');
+    const sCls = (Number(d.Surplus)>0)?'pos':(Number(d.Surplus)<0?'neg':'');
     row.innerHTML = `<td>${bnMonths[idx]}</td><td>${formatAmount(d.Income)}</td><td>${formatAmount(d.Expense)}</td><td class="${sCls}">${formatAmount(d.Surplus)}</td><td>${formatAmount(d.Investment)}</td><td>${formatAmount(d.Loan)}</td><td>${formatAmount(d.Asset)}</td><td>${formatAmount(d.Liability)}</td>`;
     tbody.appendChild(row);
   });
-  let tCls = (totals.Surplus>0)?'pos':(totals.Surplus<0?'neg':'');
+  const tCls = (totals.Surplus>0)?'pos':(totals.Surplus<0?'neg':'');
   tfoot.innerHTML = `<td>মোট</td><td>${formatAmount(totals.Income)}</td><td>${formatAmount(totals.Expense)}</td><td class="${tCls}">${formatAmount(totals.Surplus)}</td><td>${formatAmount(totals.Investment)}</td><td>${formatAmount(totals.Loan)}</td><td>${formatAmount(totals.Asset)}</td><td>${formatAmount(totals.Liability)}</td>`;
 }
 
@@ -678,7 +734,6 @@ function showAllMonthly(){
 }
 
 const palette = ['#3347ff','#12b886','#ff5c7a','#ffa62b','#8b5cf6','#0ea5e9','#e11d8f','#64748b'];
-// A13: ধরন-ভিত্তিক আইকন
 function accIcon(name, type){
   const t = (type||'').toLowerCase();
   if (t==='cash') return 'fa-money-bill-wave';
@@ -692,43 +747,42 @@ function renderAccountGrid(accounts){
   const grid = document.getElementById('accountGrid');
   grid.innerHTML = '';
   if (!accounts || accounts.length===0){ grid.innerHTML = '<div class="empty glass" style="grid-column:1/-1;">কোনো অ্যাকাউন্ট ডেটা পাওয়া যায়নি</div>'; return; }
-  // A5: D3-এর মোট ব্যালেন্সের সাথে সামঞ্জস্য — Cash+Bank+Wallet; শতাংশে ঋণাত্মক বাদ
-  let totalBalance = 0;
-  accounts.forEach(a=>{ if (a.type==='Cash'||a.type==='Bank'||a.type==='Wallet') totalBalance += Math.max(0, Number(a.currentBalance)||0); });
   accounts.forEach((acc, i)=>{
     const cls = (Number(acc.currentBalance)>=0)?'pos':'neg';
-    const percent = totalBalance>0 ? Math.round((Math.max(0, Number(acc.currentBalance)) / totalBalance) * 100) : 0;
+    const percent = Math.round(accPercent(acc, accounts));
     const circumference = 2*Math.PI*22;
     const dashoffset = circumference * (1 - percent/100);
-    const b = document.createElement('button');
+    const b = document.createElement('div');
     b.className = 'acc glass';
+    b.setAttribute('role','button'); b.tabIndex = 0;
     b.innerHTML = `
       <div class="acc-percent-wrap">
         <svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="22" fill="none" stroke="#e3e7f4" stroke-width="5"/><circle cx="28" cy="28" r="22" fill="none" stroke="#3347ff" stroke-width="5" stroke-linecap="round" stroke-dasharray="${circumference}" stroke-dashoffset="${dashoffset}"/></svg>
         <div class="acc-pct-text">${percent}%</div>
       </div>
       <div class="ic" style="background:${palette[i%palette.length]}"><i class="fa-solid ${accIcon(acc.name, acc.type)}"></i></div>
-      <div class="n">${acc.name || 'নাম নেই'}</div>
+      <div class="n">${esc(acc.name) || 'নাম নেই'}</div>
       <div class="v ${cls}">${formatAmount(acc.currentBalance)}</div>`;
     b.onclick = () => openModal(i);
+    b.onkeydown = ev => { if (ev.key==='Enter' || ev.key===' '){ ev.preventDefault(); openModal(i); } };
     grid.appendChild(b);
   });
 }
 
 function openModal(i){
   const acc = window.__accounts[i];
-  const total = window.__accounts.reduce((s,a)=> s + Math.max(0, Number(a.currentBalance)||0), 0);
-  const share = total>0 ? Math.max(0, Number(acc.currentBalance)||0)/total*100 : 0;
+  const share = accPercent(acc, window.__accounts);
   const cls = (Number(acc.currentBalance)>=0)?'pos':'neg';
+  const note = isLiquid(acc) ? ('মোট ব্যালেন্সের ' + Math.round(share) + '% এই অ্যাকাউন্টে') : 'এই ধরনের অ্যাকাউন্ট মোট ব্যালেন্সে ধরা হয় না';
   document.getElementById('sheet').innerHTML = `
-    <div class="sheet-h"><div class="ic" style="background:${palette[i%palette.length]}"><i class="fa-solid ${accIcon(acc.name, acc.type)}"></i></div><b>${acc.name||'নাম নেই'}</b><button onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button></div>
-    <div class="row"><span>ধরন</span><b>${acc.type||'—'}</b></div>
+    <div class="sheet-h"><div class="ic" style="background:${palette[i%palette.length]}"><i class="fa-solid ${accIcon(acc.name, acc.type)}"></i></div><b>${esc(acc.name)||'নাম নেই'}</b><button onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button></div>
+    <div class="row"><span>ধরন</span><b>${esc(acc.type)||'—'}</b></div>
     <div class="row"><span>ওপেনিং ব্যালেন্স</span><b>${formatAmount(acc.openingBalance)}</b></div>
     <div class="row"><span>মোট জমা</span><b class="pos">${formatAmount(acc.totalIn)}</b></div>
     <div class="row"><span>মোট খরচ</span><b class="neg">${formatAmount(acc.totalOut)}</b></div>
     <div class="cur"><span>বর্তমান ব্যালেন্স</span><b class="${cls}">${formatAmount(acc.currentBalance)}</b></div>
     <div class="share"><i style="width:${share}%"></i></div>
-    <div class="share-l">মোট ব্যালেন্সের ${Math.round(share)}% এই অ্যাকাউন্টে</div>`;
+    <div class="share-l">${note}</div>`;
   document.getElementById('modal').classList.add('show');
 }
 function closeModal(){ document.getElementById('modal').classList.remove('show'); }
@@ -745,9 +799,9 @@ function renderLoanCards(){
   const payRecent = currentLoans.payables.slice(0,2);
   const recList = document.getElementById('receivableList');
   const payList = document.getElementById('payableList');
-  if (recRecent.length>0){ recList.innerHTML=''; recRecent.forEach(item=>{ const div=document.createElement('div'); div.className='loan-item'; div.innerHTML = `<span class="loan-name">${item.name}</span><span class="loan-amount pos">${formatAmount(item.amount)}</span>`; recList.appendChild(div); }); }
+  if (recRecent.length>0){ recList.innerHTML=''; recRecent.forEach(item=>{ const div=document.createElement('div'); div.className='loan-item'; div.innerHTML = `<span class="loan-name">${esc(item.name)}</span><span class="loan-amount pos">${formatAmount(item.amount)}</span>`; recList.appendChild(div); }); }
   else recList.innerHTML = '<div class="empty">কোনো প্রাপ্য নেই</div>';
-  if (payRecent.length>0){ payList.innerHTML=''; payRecent.forEach(item=>{ const div=document.createElement('div'); div.className='loan-item'; div.innerHTML = `<span class="loan-name">${item.name}</span><span class="loan-amount neg">${formatAmount(item.amount)}</span>`; payList.appendChild(div); }); }
+  if (payRecent.length>0){ payList.innerHTML=''; payRecent.forEach(item=>{ const div=document.createElement('div'); div.className='loan-item'; div.innerHTML = `<span class="loan-name">${esc(item.name)}</span><span class="loan-amount neg">${formatAmount(item.amount)}</span>`; payList.appendChild(div); }); }
   else payList.innerHTML = '<div class="empty">কোনো দেয় নেই</div>';
   document.getElementById('totalReceivable').innerText = formatAmount(currentLoans.receivables.reduce((s,x)=>s+x.amount,0));
   document.getElementById('totalPayable').innerText = formatAmount(currentLoans.payables.reduce((s,x)=>s+x.amount,0));
@@ -756,17 +810,17 @@ function renderLoanCards(){
 function showAllLoans(){
   let html = '<div class="sheet-h"><div class="ic" style="background:var(--blue)"><i class="fa-solid fa-handshake"></i></div><b>সব ঋণ ও দেনা</b><button onclick="closeAllLoanModal()"><i class="fa-solid fa-xmark"></i></button></div>';
   html += '<h4 style="margin-bottom:10px;color:#047857">🟢 প্রাপ্য</h4>';
-  if (currentLoans.receivables.length>0) currentLoans.receivables.forEach(item=>{ html += `<div class="loan-item"><span class="loan-name">${item.name}</span><span class="loan-amount pos">${formatAmount(item.amount)}</span></div>`; });
+  if (currentLoans.receivables.length>0) currentLoans.receivables.forEach(item=>{ html += `<div class="loan-item"><span class="loan-name">${esc(item.name)}</span><span class="loan-amount pos">${formatAmount(item.amount)}</span></div>`; });
   else html += '<div class="empty">কোনো প্রাপ্য নেই</div>';
   html += '<h4 style="margin:16px 0 10px;color:#b91c1c">🔴 দেয়</h4>';
-  if (currentLoans.payables.length>0) currentLoans.payables.forEach(item=>{ html += `<div class="loan-item"><span class="loan-name">${item.name}</span><span class="loan-amount neg">${formatAmount(item.amount)}</span></div>`; });
+  if (currentLoans.payables.length>0) currentLoans.payables.forEach(item=>{ html += `<div class="loan-item"><span class="loan-name">${esc(item.name)}</span><span class="loan-amount neg">${formatAmount(item.amount)}</span></div>`; });
   else html += '<div class="empty">কোনো দেয় নেই</div>';
   document.getElementById('allLoanSheet').innerHTML = html;
   document.getElementById('allLoanModal').classList.add('show');
 }
 function closeAllLoanModal(){ document.getElementById('allLoanModal').classList.remove('show'); }
 
-// F3: মাস-নেভিগেশন + পেজিনেশন
+// মাস-নেভিগেশন + পেজিনেশন
 let txnMonthCursor = null; // {y, m}
 function latestTxnMonth(){
   if (!currentTransactions.length) return { y: new Date().getFullYear(), m: new Date().getMonth() };
@@ -829,71 +883,174 @@ function txnMonthNext(){
 }
 function closeAllTxnModal(){ document.getElementById('allTxnModal').classList.remove('show'); }
 
+// লেনদেনের চাবি: id থাকলে id, না থাকলে সারি নম্বর (মাইগ্রেশনের আগের সারির জন্য)
+const txnKey = t => t.id ? t.id : ('row:' + t.row);
+const findTxn = key => currentTransactions.find(t => txnKey(t) === key);
+
+// টাকার প্রবাহ: 'in' | 'out' | 'none'
+function txnFlow(t){
+  const type = nfc(t.type), sub = nfc(t.subCategory);
+  if (type === T.INCOME) return 'in';
+  if (type === T.EXPENSE || type === T.INVEST) return 'out';
+  if (type === T.LOAN){
+    if (sub === SUBCATS.LOAN_TAKE) return 'in';
+    if (sub === SUBCATS.LOAN_GIVE) return 'out';
+    if (sub === SUBCATS.LOAN_REPAY) return t.repayDir === 'received' ? 'in' : 'out';
+  }
+  return 'none';
+}
+
 function createTxnElement(txn){
-  const isIncome = txn.type.includes('আয়') || txn.type.includes('আয়');
-  const isExpense = txn.type.includes('ব্যয়') || txn.type.includes('ব্যয়') || txn.type.includes('খরচ');
-  const iconClass = isIncome ? 'fa-arrow-down' : (isExpense ? 'fa-arrow-up' : 'fa-right-left');
-  const iconBg = isIncome ? '#d9f6ec' : (isExpense ? '#ffe1e8' : '#e0e5ff');
-  const iconColor = isIncome ? 'var(--mint)' : (isExpense ? 'var(--coral)' : 'var(--blue)');
-  const amountClass = isIncome ? 'pos' : (isExpense ? 'neg' : '');
-  const sign = isIncome ? '+' : (isExpense ? '-' : '');
+  const flow = txnFlow(txn);
+  const isIn = flow==='in', isOut = flow==='out';
+  const iconClass = isIn ? 'fa-arrow-down' : (isOut ? 'fa-arrow-up' : 'fa-right-left');
+  const iconBg = isIn ? '#d9f6ec' : (isOut ? '#ffe1e8' : '#e0e5ff');
+  const iconColor = isIn ? 'var(--mint)' : (isOut ? 'var(--coral)' : 'var(--blue)');
+  const amountClass = isIn ? 'pos' : (isOut ? 'neg' : '');
+  const sign = isIn ? '+' : (isOut ? '-' : '');
+  const key = esc(txnKey(txn));
   const div = document.createElement('div');
   div.className = 'txn-item';
   div.innerHTML = `
     <div class="txn-left">
       <div class="txn-icon" style="background:${iconBg};color:${iconColor}"><i class="fa-solid ${iconClass}"></i></div>
       <div class="txn-details">
-        <h4>${txn.subCategory || txn.category || 'লেনদেন'}</h4>
-        <p>${txn.fromAccount || ''} • ${txn.date} ${txn.borrower ? '• '+txn.borrower : ''} ${txn.notes ? '• '+txn.notes : ''}</p>
+        <h4>${esc(txn.subCategory || txn.category) || 'লেনদেন'}</h4>
+        <p>${esc(txn.fromAccount)} • ${esc(txn.date)} ${txn.borrower ? '• '+esc(txn.borrower) : ''} ${txn.notes ? '• '+esc(txn.notes) : ''}</p>
       </div>
     </div>
     <div class="txn-right">
       <div class="txn-amount ${amountClass}">${sign}${formatAmount(txn.amount)}</div>
-      <button class="txn-btn edit" onclick="editTxn('${txn.id}')" title="এডিট"><i class="fa-solid fa-pen"></i></button>
-      <button class="txn-btn del" onclick="deleteTxn('${txn.id}')" title="ডিলিট"><i class="fa-solid fa-trash"></i></button>
+      <button class="txn-btn edit" onclick="editTxn('${key}')" title="এডিট"><i class="fa-solid fa-pen"></i></button>
+      <button class="txn-btn del" onclick="deleteTxn('${key}')" title="ডিলিট"><i class="fa-solid fa-trash"></i></button>
     </div>`;
   return div;
 }
 
 // ==========================================
-// এডিট মডাল (A7, D1, D5)
+// ফিল্ড-নিয়ম (ফর্ম ও এডিট — শেয়ার্ড)
 // ==========================================
-function editTxn(id){
-  closeAllTxnModal();
-  const txn = currentTransactions.find(t => t.id === id);
-  if (!txn){ showToast('লেনদেন পাওয়া যায়নি', 'error'); return; }
+function fieldRules(type, sub){
+  type = nfc(type); sub = nfc(sub);
+  const r = {
+    fromLabel: 'উৎস অ্যাকাউন্ট', toLabel: 'গন্তব্য অ্যাকাউন্ট',
+    showFrom: true, showTo: false, showCard: false,
+    borrowerLabel: 'ঋণগ্রহীতার নাম', borrowerKind: 'none',
+    showRepayDir: false,
+    fromRequired: true, toRequired: false, borrowerRequired: false
+  };
+  if (type === T.INCOME){ r.fromLabel = 'যে অ্যাকাউন্টে আয় জমা হলো'; }
+  else if (type === T.EXPENSE){ r.fromLabel = 'যে অ্যাকাউন্ট থেকে ব্যয় হলো'; }
+  else if (type === T.INVEST){ r.fromLabel = 'যে অ্যাকাউন্ট থেকে বিনিয়োগ হলো'; }
+  else if (type === T.TRANSFER){
+    r.fromLabel = 'যে অ্যাকাউন্ট থেকে পাঠানো হলো';
+    r.toLabel = 'যে অ্যাকাউন্টে জমা হলো';
+    r.showTo = true; r.toRequired = true;
+    if (sub === nfc('ক্যাশ উত্তোলন')){ r.fromLabel = 'যে অ্যাকাউন্ট থেকে টাকা তোলা হলো'; r.toLabel = 'যে অ্যাকাউন্টে নগদ জমা হলো'; }
+    else if (sub === nfc('ব্যাংকে নগদ জমা') || sub === nfc('ব্যাংক জমা')){ r.fromLabel = 'যে অ্যাকাউন্ট থেকে জমা দেওয়া হলো'; r.toLabel = 'যে ব্যাংকে জমা হলো'; }
+    else if (sub === SUBCATS.CARD_PAY){ r.fromLabel = 'যে অ্যাকাউন্ট থেকে বিল দেওয়া হলো'; r.toLabel = 'যে কার্ডের বিল পরিশোধ হলো'; }
+  }
+  else if (type === T.LOAN){
+    if (sub === SUBCATS.LOAN_GIVE){ r.fromLabel = 'যে অ্যাকাউন্ট থেকে ঋণ দেওয়া হলো'; r.borrowerKind = 'text'; r.borrowerRequired = true; }
+    else if (sub === SUBCATS.LOAN_TAKE){ r.fromLabel = 'যে অ্যাকাউন্টে ঋণের টাকা এলো'; r.borrowerKind = 'text'; r.borrowerRequired = true; }
+    else if (sub === SUBCATS.LOAN_REPAY){
+      r.fromLabel = 'যে অ্যাকাউন্ট থেকে পরিশোধ হলো';
+      r.borrowerKind = 'select'; r.showRepayDir = true; r.borrowerRequired = true;
+    }
+    else if (sub === SUBCATS.CARD_DUE){
+      r.fromLabel = ''; r.showFrom = false; r.fromRequired = false;
+      r.borrowerLabel = 'কার্ডের নাম'; r.borrowerKind = 'card'; r.borrowerRequired = true;
+      r.showCard = true;
+    }
+  }
+  return r;
+}
 
-  const typeOptions = (masterData.types||[]).map(t=>`<option value="${t}" ${t===txn.type?'selected':''}>${t}</option>`).join('');
-  const fromOptions = (masterData.accounts||[]).map(a=>`<option value="${a}" ${a===txn.fromAccount?'selected':''}>${a}</option>`).join('');
-  const toOptions = (masterData.accounts||[]).map(a=>`<option value="${a}" ${a===txn.toAccount?'selected':''}>${a}</option>`).join('');
-  const cardOptions = (masterData.cardNetworks||[]).map(c=>`<option value="${c}" ${c===txn.cardNetwork?'selected':''}>${c}</option>`).join('');
+// দিক অনুযায়ী লেবেল (ঋণ পরিশোধ)
+function repayFromLabel(dir){
+  return dir === 'received' ? 'যে অ্যাকাউন্টে টাকা এলো' : 'যে অ্যাকাউন্ট থেকে পরিশোধ হলো';
+}
+
+function applyFieldRules(formEl, rules){
+  const fromGroup = formEl.querySelector('#fromAccountGroup');
+  const toGroup = formEl.querySelector('#toAccountGroup');
+  const cardGroup = formEl.querySelector('#cardNetworkGroup');
+  const borrowerGroup = formEl.querySelector('#borrowerGroup');
+  const repayGroup = formEl.querySelector('#repayDirectionGroup');
+  const fromLabel = formEl.querySelector('#fromLabelText');
+  const toLabel = formEl.querySelector('#toLabelText');
+  const borrowerLabel = formEl.querySelector('#borrowerLabel');
+  const fromSel = formEl.querySelector('#fromAccount');
+  const toSel = formEl.querySelector('#toAccount');
+
+  fromGroup.style.display = rules.showFrom ? 'flex' : 'none';
+  toGroup.style.display = rules.showTo ? 'flex' : 'none';
+  borrowerGroup.style.display = (rules.borrowerKind !== 'none') ? 'flex' : 'none';
+  repayGroup.style.display = rules.showRepayDir ? 'flex' : 'none';
+  // কার্ড-নেটওয়ার্ক: নিয়ম অনুযায়ী, নয়তো উৎস অ্যাকাউন্টের ধরন Card হলে
+  const fromType = (window.__accounts||[]).find(a=>a.name===(fromSel&&fromSel.value))?.type || '';
+  cardGroup.style.display = (rules.showCard || (rules.showFrom && fromType==='Card')) ? 'flex' : 'none';
+  if (fromLabel) fromLabel.textContent = rules.showRepayDir ? repayFromLabel(formEl.querySelector('input[name=repayDir]:checked')?.value) : rules.fromLabel;
+  if (toLabel) toLabel.textContent = rules.toLabel;
+  if (borrowerLabel) borrowerLabel.textContent = rules.borrowerLabel;
+  if (fromSel) fromSel.required = rules.fromRequired;
+  if (toSel) toSel.required = rules.toRequired;
+  return rules;
+}
+
+// সাবমিটের আগে নিয়মভিত্তিক যাচাই; ত্রুটি বার্তা ফেরায় (না থাকলে '')
+function validateByRules(rules, v){
+  if (rules.fromRequired && !v.from) return 'উৎস অ্যাকাউন্ট নির্বাচন করুন!';
+  if (rules.toRequired && !v.to) return 'গন্তব্য অ্যাকাউন্ট নির্বাচন করুন!';
+  if (rules.toRequired && v.to && v.to === v.from) return 'উৎস ও গন্তব্য অ্যাকাউন্ট এক হতে পারে না!';
+  if (rules.borrowerRequired && !v.borrower) return (rules.borrowerKind==='card' ? 'কার্ড নির্বাচন করুন!' : 'নাম দিন!');
+  return '';
+}
+
+// ==========================================
+// এডিট মডাল
+// ==========================================
+function optsHtml(list, selected){
+  const arr = (list||[]).slice();
+  if (selected && !arr.includes(selected)) arr.push(selected);
+  return arr.map(v=>`<option value="${esc(v)}" ${v===selected?'selected':''}>${esc(v)}</option>`).join('');
+}
+
+let editingKey = null;
+function editTxn(key){
+  closeAllTxnModal();
+  const txn = findTxn(key);
+  if (!txn){ showToast('লেনদেন পাওয়া যায়নি', 'error'); return; }
+  editingKey = key;
 
   document.getElementById('editSheet').innerHTML = `
     <div class="sheet-h"><div class="ic" style="background:var(--blue)"><i class="fa-solid fa-pen"></i></div><b>লেনদেন এডিট করুন</b><button onclick="closeEditModal()"><i class="fa-solid fa-xmark"></i></button></div>
     <div class="edit-form">
-      <div class="edit-field"><label><i class="fa-regular fa-calendar"></i> তারিখ</label><input type="date" id="editDate" value="${txn.date}"></div>
-      <div class="edit-field"><label><i class="fa-solid fa-right-left"></i> ধরন</label><select id="editType" onchange="onEditTypeChange()"><option value="">নির্বাচন</option>${typeOptions}</select></div>
+      <div class="edit-field"><label><i class="fa-regular fa-calendar"></i> তারিখ</label><input type="date" id="editDate" value="${esc(txn.date)}"></div>
+      <div class="edit-field"><label><i class="fa-solid fa-right-left"></i> ধরন</label><select id="editType" onchange="onEditTypeChange()"><option value="">নির্বাচন</option>${optsHtml(masterData.types, txn.type)}</select></div>
       <div class="edit-field"><label><i class="fa-solid fa-layer-group"></i> খাত</label><select id="editCategory" onchange="onEditCategoryChange()"></select></div>
       <div class="edit-field"><label><i class="fa-solid fa-tag"></i> উপ-খাত</label><select id="editSubCategory" onchange="onEditSubCategoryChange()"></select></div>
       <div class="edit-field" id="editRepayDirGroup" style="display:none"><label><i class="fa-solid fa-arrows-left-right"></i> দিক</label>
-        <div class="radio-group"><label><input type="radio" name="editRepayDir" value="paid" checked> আমি দিলাম</label><label><input type="radio" name="editRepayDir" value="received"> আমি পেলাম</label></div>
+        <div class="radio-group"><label><input type="radio" name="editRepayDir" value="paid" onchange="onEditRepayDirChange()"> আমি দিলাম</label><label><input type="radio" name="editRepayDir" value="received" onchange="onEditRepayDirChange()"> আমি পেলাম</label></div>
       </div>
       <div class="edit-field" id="editBorrowerGroup" style="display:none"><label><i class="fa-solid fa-user"></i> <span id="editBorrowerLabel">ঋণগ্রহীতা</span></label><div id="editBorrowerWrapper"></div></div>
-      <div class="edit-field" id="editFromGroup"><label><i class="fa-solid fa-wallet"></i> <span id="editFromLabel">উৎস</span></label><select id="editFrom"><option value="">নির্বাচন</option>${fromOptions}</select></div>
-      <div class="edit-field" id="editToGroup" style="display:none"><label><i class="fa-solid fa-building-columns"></i> <span id="editToLabel">গন্তব্য</span></label><select id="editTo"><option value="">নির্বাচন</option>${toOptions}</select></div>
-      <div class="edit-field" id="editCardGroup" style="display:none"><label><i class="fa-regular fa-credit-card"></i> কার্ড</label><select id="editCard"><option value="">নির্বাচন</option>${cardOptions}</select></div>
-      <div class="edit-field"><label><i class="fa-solid fa-money-bill-wave"></i> পরিমাণ</label><input type="number" id="editAmount" value="${txn.amount}" step="any"></div>
-      <div class="edit-field"><label><i class="fa-regular fa-note-sticky"></i> বিবরণ</label><input type="text" id="editNotes" value="${txn.notes || ''}"></div>
+      <div class="edit-field" id="editFromGroup"><label><i class="fa-solid fa-wallet"></i> <span id="editFromLabel">উৎস</span></label><select id="editFrom"><option value="">নির্বাচন</option>${optsHtml(masterData.accounts, txn.fromAccount)}</select></div>
+      <div class="edit-field" id="editToGroup" style="display:none"><label><i class="fa-solid fa-building-columns"></i> <span id="editToLabel">গন্তব্য</span></label><select id="editTo"><option value="">নির্বাচন</option>${optsHtml(masterData.accounts, txn.toAccount)}</select></div>
+      <div class="edit-field" id="editCardGroup" style="display:none"><label><i class="fa-regular fa-credit-card"></i> কার্ড</label><select id="editCard"><option value="">নির্বাচন</option>${optsHtml(masterData.cardNetworks, txn.cardNetwork)}</select></div>
+      <div class="edit-field"><label><i class="fa-solid fa-money-bill-wave"></i> পরিমাণ</label><input type="number" id="editAmount" value="${esc(txn.amount)}" step="any"></div>
+      <div class="edit-field"><label><i class="fa-regular fa-note-sticky"></i> বিবরণ</label><input type="text" id="editNotes" value="${esc(txn.notes)}"></div>
       <div class="edit-btn-row">
         <button class="edit-btn cancel" onclick="closeEditModal()"><i class="fa-solid fa-xmark"></i> বাতিল</button>
-        <button class="edit-btn save" onclick="saveEdit('${txn.id}')"><i class="fa-solid fa-check"></i> আপডেট</button>
+        <button class="edit-btn save" id="editSaveBtn" onclick="saveEdit()"><i class="fa-solid fa-check"></i> আপডেট</button>
       </div>
     </div>`;
   document.getElementById('editModal').classList.add('show');
 
-  // A7(খ): বিদ্যমান মান রেখে খাত/উপ-খাত পপুলেট
+  const dirVal = txn.repayDir === 'received' ? 'received' : 'paid';
+  const radio = document.querySelector(`input[name=editRepayDir][value="${dirVal}"]`);
+  if (radio) radio.checked = true;
+
   populateEditCategories(txn.type, txn.category, txn.subCategory);
-  // A7(ঘ): ফিল্ড-নিয়ম
   applyEditFieldRules(txn.type, txn.subCategory, txn.borrower);
 }
 
@@ -905,12 +1062,18 @@ function populateEditCategories(type, selectedCat, selectedSub){
       const opt = document.createElement('option'); opt.value = d.category; opt.textContent = d.category; catSelect.appendChild(opt);
     }
   });
+  if (selectedCat && ![...catSelect.options].some(o=>o.value===selectedCat)){
+    const opt = document.createElement('option'); opt.value = selectedCat; opt.textContent = selectedCat; catSelect.appendChild(opt);
+  }
   catSelect.value = selectedCat || '';
   const subSelect = document.getElementById('editSubCategory');
   subSelect.innerHTML = '<option value="">উপ-খাত</option>';
   (masterData.dataMap||[]).filter(d => d.type === type && d.category === selectedCat).forEach(d => {
     const opt = document.createElement('option'); opt.value = d.subCategory; opt.textContent = d.subCategory; subSelect.appendChild(opt);
   });
+  if (selectedSub && ![...subSelect.options].some(o=>o.value===selectedSub)){
+    const opt = document.createElement('option'); opt.value = selectedSub; opt.textContent = selectedSub; subSelect.appendChild(opt);
+  }
   subSelect.value = selectedSub || '';
 }
 
@@ -934,127 +1097,65 @@ function onEditCategoryChange(){
 function onEditSubCategoryChange(){
   const type = document.getElementById('editType').value;
   const sub = document.getElementById('editSubCategory').value;
-  applyEditFieldRules(type, sub, null);
+  const cur = document.getElementById('editBorrower');
+  applyEditFieldRules(type, sub, cur ? cur.value : null);
 }
 
-// F4: শেয়ার্ড ফিল্ড-নিয়ম (ফর্ম ও এডিট)
-function fieldRules(type, sub){
-  const r = {
-    fromLabel: 'উৎস অ্যাকাউন্ট', toLabel: 'গন্তব্য অ্যাকাউন্ট',
-    showFrom: true, showTo: false, showCard: false,
-    borrowerLabel: 'ঋণগ্রহীতার নাম', borrowerKind: 'none',
-    showRepayDir: false,
-    fromRequired: true, toRequired: false
-  };
-  if (type === 'আয়'){ r.fromLabel = 'যে অ্যাকাউন্টে আয় জমা হলো'; }
-  else if (type === 'ব্যয়'){ r.fromLabel = 'যে অ্যাকাউন্ট থেকে ব্যয় হলো'; }
-  else if (type === 'বিনিয়োগ'){ r.fromLabel = 'যে অ্যাকাউন্ট থেকে বিনিয়োগ হলো'; }
-  else if (type === 'স্থানান্তর'){
-    r.fromLabel = 'যে অ্যাকাউন্ট থেকে পাঠানো হলো';
-    r.toLabel = 'যে অ্যাকাউন্টে জমা হলো';
-    r.showTo = true; r.toRequired = true;
-    if (sub === 'ক্যাশ উত্তোলন'){ r.fromLabel = 'যে অ্যাকাউন্ট থেকে টাকা তোলা হলো'; r.toLabel = 'যে অ্যাকাউন্টে নগদ জমা হলো'; }
-    else if (sub === 'ব্যাংকে নগদ জমা' || sub === 'ব্যাংক জমা'){ r.fromLabel = 'যে অ্যাকাউন্ট থেকে জমা দেওয়া হলো'; r.toLabel = 'যে ব্যাংকে জমা হলো'; }
-    else if (sub === 'কার্ড বিল পরিশোধ'){ r.fromLabel = 'যে অ্যাকাউন্ট থেকে বিল দেওয়া হলো'; r.toLabel = 'যে কার্ডের বিল পরিশোধ হলো'; }
-  }
-  else if (type === 'ঋণ'){
-    if (sub === 'ঋণ/ধার প্রদান' || sub === 'ঋণ প্রদান'){ r.fromLabel = 'যে অ্যাকাউন্ট থেকে ঋণ দেওয়া হলো'; r.borrowerKind = 'text'; }
-    else if (sub === 'ঋণ/ধার গ্রহণ' || sub === 'ঋণ গ্রহণ'){ r.fromLabel = 'যে অ্যাকাউন্টে ঋণের টাকা এলো'; r.borrowerKind = 'text'; }
-    else if (sub === 'ঋণ/ধার পরিশোধ' || sub === 'ঋণ পরিশোধ'){
-      r.fromLabel = 'যে অ্যাকাউন্ট থেকে পরিশোধ হলো / যে অ্যাকাউন্টে টাকা এলো';
-      r.borrowerKind = 'select'; r.showRepayDir = true;
-    }
-    else if (sub === 'ক্রেডিট কার্ড বিল'){
-      r.fromLabel = ''; r.showFrom = false; r.fromRequired = false;
-      r.borrowerLabel = 'কার্ডের নাম'; r.borrowerKind = 'card';
-      r.showCard = true;
-    }
-  }
-  return r;
+function onEditRepayDirChange(){
+  const dir = document.querySelector('input[name=editRepayDir]:checked')?.value;
+  const lbl = document.getElementById('editFromLabel');
+  if (lbl) lbl.textContent = repayFromLabel(dir);
 }
 
-function applyFieldRules(formEl, rules){
-  const fromGroup = formEl.querySelector('#fromAccountGroup');
-  const toGroup = formEl.querySelector('#toAccountGroup');
-  const cardGroup = formEl.querySelector('#cardNetworkGroup');
-  const borrowerGroup = formEl.querySelector('#borrowerGroup');
-  const repayGroup = formEl.querySelector('#repayDirectionGroup');
-  const fromLabel = formEl.querySelector('#fromLabelText');
-  const toLabel = formEl.querySelector('#toLabelText');
-  const borrowerLabel = formEl.querySelector('#borrowerLabel');
-  const fromSel = formEl.querySelector('#fromAccount');
-
-  fromGroup.style.display = rules.showFrom ? 'flex' : 'none';
-  toGroup.style.display = rules.showTo ? 'flex' : 'none';
-  cardGroup.style.display = rules.showCard ? 'flex' : 'none';
-  borrowerGroup.style.display = (rules.borrowerKind !== 'none') ? 'flex' : 'none';
-  repayGroup.style.display = rules.showRepayDir ? 'flex' : 'none';
-  if (fromLabel) fromLabel.textContent = rules.fromLabel;
-  if (toLabel) toLabel.textContent = rules.toLabel;
-  if (borrowerLabel) borrowerLabel.textContent = rules.borrowerLabel;
-  if (fromSel) fromSel.required = rules.fromRequired;
-  return rules;
-}
-
-// এডিট ফিল্ড-নিয়ম
 function applyEditFieldRules(type, sub, borrowerValue){
   const rules = fieldRules(type, sub);
-  const fromGroup = document.getElementById('editFromGroup');
-  const toGroup = document.getElementById('editToGroup');
-  const cardGroup = document.getElementById('editCardGroup');
-  const borrowerGroup = document.getElementById('editBorrowerGroup');
-  const repayGroup = document.getElementById('editRepayDirGroup');
-  const fromLabel = document.getElementById('editFromLabel');
-  const toLabel = document.getElementById('editToLabel');
-  const borrowerLabel = document.getElementById('editBorrowerLabel');
-  const borrowerWrapper = document.getElementById('editBorrowerWrapper');
+  document.getElementById('editFromGroup').style.display = rules.showFrom ? 'block' : 'none';
+  document.getElementById('editToGroup').style.display = rules.showTo ? 'block' : 'none';
+  document.getElementById('editCardGroup').style.display = rules.showCard ? 'block' : 'none';
+  document.getElementById('editBorrowerGroup').style.display = (rules.borrowerKind !== 'none') ? 'block' : 'none';
+  document.getElementById('editRepayDirGroup').style.display = rules.showRepayDir ? 'block' : 'none';
+  const dir = document.querySelector('input[name=editRepayDir]:checked')?.value;
+  document.getElementById('editFromLabel').textContent = rules.showRepayDir ? repayFromLabel(dir) : rules.fromLabel;
+  document.getElementById('editToLabel').textContent = rules.toLabel;
+  document.getElementById('editBorrowerLabel').textContent = rules.borrowerLabel;
 
-  fromGroup.style.display = rules.showFrom ? 'block' : 'none';
-  toGroup.style.display = rules.showTo ? 'block' : 'none';
-  cardGroup.style.display = rules.showCard ? 'block' : 'none';
-  borrowerGroup.style.display = (rules.borrowerKind !== 'none') ? 'block' : 'none';
-  repayGroup.style.display = rules.showRepayDir ? 'block' : 'none';
-  if (fromLabel) fromLabel.textContent = rules.fromLabel;
-  if (toLabel) toLabel.textContent = rules.toLabel;
-  if (borrowerLabel) borrowerLabel.textContent = rules.borrowerLabel;
-
-  // borrower input rebuild
+  const w = document.getElementById('editBorrowerWrapper');
   if (rules.borrowerKind === 'text'){
-    borrowerWrapper.innerHTML = `<input type="text" id="editBorrower" value="${borrowerValue || ''}" placeholder="যেমন: করিম">`;
+    w.innerHTML = `<input type="text" id="editBorrower" value="${esc(borrowerValue || '')}" placeholder="যেমন: করিম">`;
   } else if (rules.borrowerKind === 'select'){
-    const people = masterData.borrowers || [];
-    const opts = people.map(p=>`<option value="${p}" ${p===borrowerValue?'selected':''}>${p}</option>`).join('');
-    borrowerWrapper.innerHTML = `<select id="editBorrower"><option value="">নির্বাচন করুন</option>${opts}</select>`;
+    w.innerHTML = `<select id="editBorrower"><option value="">নির্বাচন করুন</option>${optsHtml(masterData.borrowers, borrowerValue||'')}</select>`;
   } else if (rules.borrowerKind === 'card'){
-    const cards = masterData.cards || [];
-    const opts = cards.map(c=>`<option value="${c}" ${c===borrowerValue?'selected':''}>${c}</option>`).join('');
-    borrowerWrapper.innerHTML = `<select id="editBorrower"><option value="">কার্ড নির্বাচন করুন</option>${opts}</select>`;
+    w.innerHTML = `<select id="editBorrower"><option value="">কার্ড নির্বাচন করুন</option>${optsHtml(masterData.cards, borrowerValue||'')}</select>`;
   } else {
-    borrowerWrapper.innerHTML = '';
+    w.innerHTML = '';
   }
 }
 
 function closeEditModal(){ document.getElementById('editModal').classList.remove('show'); }
 
-function saveEdit(id){
-  const txn = currentTransactions.find(t => t.id === id);
+async function saveEdit(){
+  const txn = findTxn(editingKey);
   if (!txn){ showToast('লেনদেন পাওয়া যায়নি', 'error'); return; }
   const date = document.getElementById('editDate').value;
   const type = document.getElementById('editType').value;
   const cat = document.getElementById('editCategory').value;
   const subCat = document.getElementById('editSubCategory').value;
-  const fromAcc = document.getElementById('editFrom')?.value || '';
-  const toAcc = document.getElementById('editTo')?.value || '';
-  const cardNet = document.getElementById('editCard')?.value || '';
   const amount = document.getElementById('editAmount').value;
   const notes = document.getElementById('editNotes').value;
-  const borrowerEl = document.getElementById('editBorrower');
-  const borrower = borrowerEl ? borrowerEl.value : '';
-
   if (!date || !type || !cat || !subCat || !amount){ showToast('সব * চিহ্নিত ঘর পূরণ করুন!', 'error'); return; }
+
+  const rules = fieldRules(type, subCat);
+  const fromAcc = rules.showFrom ? (document.getElementById('editFrom')?.value || '') : '';
+  const toAcc = rules.showTo ? (document.getElementById('editTo')?.value || '') : '';
+  const cardNet = rules.showCard ? (document.getElementById('editCard')?.value || '') : '';
+  const borrower = rules.borrowerKind !== 'none' ? (document.getElementById('editBorrower')?.value || '').trim() : '';
+  const err = validateByRules(rules, { from:fromAcc, to:toAcc, borrower });
+  if (err){ showToast(err, 'error'); return; }
+
   const formData = new FormData();
   formData.append('action', 'updateTransaction');
-  formData.append('id', id);
+  if (txn.id) formData.append('id', txn.id);
+  formData.append('row', txn.row);
   formData.append('date', date);
   formData.append('transactionType', type);
   formData.append('category', cat);
@@ -1065,51 +1166,59 @@ function saveEdit(id){
   formData.append('amount', amount);
   formData.append('notes', notes);
   formData.append('borrower', borrower);
-  fetch(scriptURL, { method:'POST', body: formData })
-    .then(res => res.json())
-    .then(data => {
-      if (data.result === 'success'){ showToast('লেনদেন আপডেট হয়েছে!', 'success'); closeEditModal(); refreshAll(); }
-      else showToast('আপডেট সমস্যা: ' + (data.error||''), 'error');
-    })
-    .catch(err => { console.error(err); showToast('আপডেট সমস্যা', 'error'); });
+  if (rules.showRepayDir) formData.append('repayDir', document.querySelector('input[name=editRepayDir]:checked')?.value || 'paid');
+
+  const btn = document.getElementById('editSaveBtn');
+  btn.disabled = true;
+  try {
+    const data = await callPost(formData);
+    if (data.result === 'success'){ showToast('লেনদেন আপডেট হয়েছে!', 'success'); closeEditModal(); refreshAll(); }
+    else showToast('আপডেট সমস্যা: ' + (data.error||''), 'error');
+  } catch(err){ console.error(err); showToast('আপডেট সমস্যা: ' + err.message, 'error'); }
+  finally { btn.disabled = false; }
 }
 
-async function deleteTxn(id){
+async function deleteTxn(key){
+  const txn = findTxn(key);
+  if (!txn){ showToast('লেনদেন পাওয়া যায়নি', 'error'); return; }
   const ok = await showConfirm('লেনদেন ডিলিট', 'আপনি কি নিশ্চিত এই লেনদেনটি ডিলিট করতে চান?');
   if (!ok) return;
   const formData = new FormData();
   formData.append('action', 'deleteTransaction');
-  formData.append('id', id);
-  fetch(scriptURL, { method:'POST', body: formData })
-    .then(res => res.json())
-    .then(data => {
-      if (data.result === 'success'){ showToast('লেনদেন ডিলিট হয়েছে!', 'success'); refreshAll(); }
-      else showToast('ডিলিট সমস্যা: ' + (data.error||''), 'error');
-    })
-    .catch(err => { console.error(err); showToast('ডিলিট সমস্যা', 'error'); });
+  if (txn.id) formData.append('id', txn.id);
+  formData.append('row', txn.row);
+  try {
+    const data = await callPost(formData);
+    if (data.result === 'success'){ showToast('লেনদেন ডিলিট হয়েছে!', 'success'); refreshAll(); }
+    else showToast('ডিলিট সমস্যা: ' + (data.error||''), 'error');
+  } catch(err){ console.error(err); showToast('ডিলিট সমস্যা: ' + err.message, 'error'); }
 }
 
 // ==========================================
-// চার্ট (F1, F2)
+// চার্ট
 // ==========================================
 const charts = {};
 function mkChart(id, cfg){ if (charts[id]) charts[id].destroy(); charts[id] = new Chart(document.getElementById(id), cfg); }
 
 let ratioMonth = null; // {y, m}
 
-function latestTxnMonthGlobal(){
-  if (!currentTransactions.length){ const n = new Date(); return { y:n.getFullYear(), m:n.getMonth() }; }
-  return parseDateParts(currentTransactions[0].date);
+// অনুপাত চার্টের শুরুর মাস: সবচেয়ে নতুন লেনদেনের মাস, তবে আজকের মাসের পরে নয়
+function initialRatioMonth(){
+  const n = new Date();
+  const today = { y:n.getFullYear(), m:n.getMonth() };
+  if (!currentTransactions.length) return today;
+  const l = parseDateParts(currentTransactions[0].date);
+  return (l.y*12 + l.m > today.y*12 + today.m) ? today : { y:l.y, m:l.m };
 }
 
-function ratioPrev(){ if (!ratioMonth) ratioMonth = latestTxnMonthGlobal(); let {y,m}=ratioMonth; m--; if(m<0){m=11;y--;} ratioMonth={y,m}; renderRatioChart(); }
-function ratioNext(){ if (!ratioMonth) ratioMonth = latestTxnMonthGlobal(); let {y,m}=ratioMonth; m++; if(m>11){m=0;y++;} ratioMonth={y,m}; renderRatioChart(); }
+function ratioPrev(){ if (!ratioMonth) ratioMonth = initialRatioMonth(); let {y,m}=ratioMonth; m--; if(m<0){m=11;y--;} ratioMonth={y,m}; renderRatioChart(); }
+function ratioNext(){ if (!ratioMonth) ratioMonth = initialRatioMonth(); let {y,m}=ratioMonth; m++; if(m>11){m=0;y++;} ratioMonth={y,m}; renderRatioChart(); }
 
 function renderCharts(summary, accounts){
   Chart.defaults.font.family = "'Hind Siliguri', sans-serif";
   Chart.defaults.color = '#6b7592';
   const val = (m,k) => Number(summary && summary[m] ? summary[m][k] : 0) || 0;
-  const labels = enMonthsShort; // F1
+  const labels = enMonthsShort;
   const inc = enMonths.map(m=>val(m,'Income'));
   const exp = enMonths.map(m=>val(m,'Expense'));
   const sur = enMonths.map(m=>val(m,'Surplus'));
@@ -1126,7 +1235,7 @@ function renderCharts(summary, accounts){
     { label:'ব্যয়', data:exp, borderColor:'#ff5c7a', backgroundColor:'rgba(255,92,122,0.1)', fill:true, tension:.4, borderWidth:2.5, pointRadius:3 }
   ] }, options: lineOpts });
 
-  if (!ratioMonth) ratioMonth = latestTxnMonthGlobal();
+  if (!ratioMonth) ratioMonth = initialRatioMonth();
   renderRatioChart();
 
   mkChart('saveChart', { type:'bar', data:{ labels, datasets:[
@@ -1143,22 +1252,23 @@ function renderCharts(summary, accounts){
   }, options:{ responsive:true, maintainAspectRatio:false, cutout:'68%', circumference:180, rotation:-90, plugins:{ legend:{ display:false }, tooltip: loanHasData ? money : { enabled:false } } } });
 }
 
-// F2: অনুপাত চার্ট — মাস-নেভিগেশন, শুধু এক দিক থাকলে পূর্ণ রিং, দুটোই ০ হলে ধূসর + বার্তা
 function renderRatioChart(){
   const summary = currentSummary || {};
   const { y, m } = ratioMonth;
   document.getElementById('ratioMonthLabel').textContent = bnMonths[m] + ' ' + y;
-  // সামারি বছরের-ভিত্তিক; selectedYear না হলে ০
   const selYear = parseInt(document.getElementById('yearFilter').value);
   let curInc = 0, curExp = 0;
-  if (selYear === y){
+  const sameYear = (selYear === y);
+  if (sameYear){
     curInc = Number(summary[enMonths[m]]?.Income) || 0;
     curExp = Number(summary[enMonths[m]]?.Expense) || 0;
   }
   const empty = document.getElementById('ratioEmpty');
   const bothZero = (curInc + curExp) === 0;
-  if (bothZero){ empty.style.display = 'flex'; empty.textContent = 'এই মাসে কোনো লেনদেন নেই'; }
-  else empty.style.display = 'none';
+  if (bothZero){
+    empty.style.display = 'flex';
+    empty.textContent = sameYear ? 'এই মাসে কোনো লেনদেন নেই' : (y + ' সালের ডেটা দেখতে উপরে বছর বদলান');
+  } else empty.style.display = 'none';
 
   const data = bothZero ? [1] : [curInc, curExp];
   const colors = bothZero ? ['#e2e8f0'] : ['#12b886','#ff5c7a'];
@@ -1168,7 +1278,7 @@ function renderRatioChart(){
 }
 
 // ==========================================
-// ফর্ম (F4, F5, D1, D2)
+// ফর্ম
 // ==========================================
 let formattedBackendDate = "";
 
@@ -1185,7 +1295,6 @@ const fp = flatpickr("#date", {
   onChange: function(selectedDates){ if (selectedDates[0]) setBackendDate(selectedDates[0]); }
 });
 
-// master data ফর্মে বসানো (A7-ক: refreshAll-এ কল)
 function loadMasterDataIntoForm(){
   const typeSelect = document.getElementById("transactionType");
   if (!typeSelect) return;
@@ -1208,10 +1317,16 @@ function loadMasterDataIntoForm(){
   fromSelect.value = curFrom || ''; toSelect.value = curTo || '';
 
   const cardSelect = document.getElementById("cardNetwork");
+  const curCard = cardSelect.value;
   cardSelect.innerHTML = '<option value="">কার্ড নির্বাচন করুন</option>';
   (masterData.cardNetworks||[]).forEach(card=>{
     const opt = document.createElement("option"); opt.value = card; opt.textContent = card; cardSelect.appendChild(opt);
   });
+  cardSelect.value = curCard || '';
+}
+
+function currentFormRules(){
+  return fieldRules(document.getElementById('transactionType').value, document.getElementById('subCategory').value);
 }
 
 function onTypeChange(){
@@ -1222,6 +1337,10 @@ function onTypeChange(){
   catSelect.innerHTML = '<option value="">প্রধান খাত নির্বাচন করুন</option>';
   subSelect.innerHTML = '<option value="">আগে প্রধান খাত নির্বাচন করুন</option>';
   subSelect.disabled = true;
+  // আগের ধরনের লুকানো ফিল্ডের মান মুছে ফেলা
+  document.getElementById('borrowerWrapper').innerHTML = '';
+  document.getElementById('toAccount').value = '';
+  document.getElementById('cardNetwork').value = '';
   if (!type){ catSelect.disabled = true; applyFieldRules(document.getElementById('financeForm'), fieldRules('', '')); return; }
   catSelect.disabled = false;
   const cats = [...new Set((masterData.dataMap||[]).filter(d=>d.type===type).map(d=>d.category))];
@@ -1234,11 +1353,12 @@ function onCategoryChange(){
   const cat = document.getElementById('category').value;
   const subSelect = document.getElementById('subCategory');
   subSelect.innerHTML = '<option value="">উপ-খাত নির্বাচন করুন</option>';
-  if (!cat){ subSelect.disabled = true; return; }
+  if (!cat){ subSelect.disabled = true; onSubCategoryChange(); return; }
   subSelect.disabled = false;
   (masterData.dataMap||[]).filter(d=>d.type===type && d.category===cat).forEach(d=>{
     const opt = document.createElement('option'); opt.value = d.subCategory; opt.textContent = d.subCategory; subSelect.appendChild(opt);
   });
+  onSubCategoryChange(); // উপ-খাত রিসেট হয়েছে — নিয়ম আবার প্রয়োগ
 }
 
 function onSubCategoryChange(){
@@ -1246,93 +1366,120 @@ function onSubCategoryChange(){
   const sub = document.getElementById('subCategory').value;
   const rules = fieldRules(type, sub);
   applyFieldRules(document.getElementById('financeForm'), rules);
-  // ঋণগ্রহীতা/কার্ড wrapper
   const wrapper = document.getElementById('borrowerWrapper');
   if (rules.borrowerKind === 'text'){
     wrapper.innerHTML = `<input type="text" id="borrower" name="borrower" placeholder="যেমন: করিম">`;
   } else if (rules.borrowerKind === 'select'){
     const people = masterData.borrowers || [];
     if (people.length === 0){
-      wrapper.innerHTML = `<div class="empty" style="padding:12px;font-size:13px;text-align:left;color:var(--mute)">কোনো নাম পাওয়া যায়নি</div><input type="text" id="borrower" name="borrower" placeholder="হাতে লিখুন">`;
+      wrapper.innerHTML = `<input type="text" id="borrower" name="borrower" placeholder="নাম হাতে লিখুন">`;
     } else {
-      wrapper.innerHTML = `<select id="borrower" name="borrower"><option value="">নির্বাচন করুন</option>${people.map(p=>`<option value="${p}">${p}</option>`).join('')}</select>`;
+      wrapper.innerHTML = `<select id="borrower" name="borrower"><option value="">নির্বাচন করুন</option>${people.map(p=>`<option value="${esc(p)}">${esc(p)}</option>`).join('')}</select>`;
     }
   } else if (rules.borrowerKind === 'card'){
     const cards = masterData.cards || [];
     if (cards.length === 0){
       wrapper.innerHTML = `<select id="borrower" name="borrower"><option value="">কার্ড পাওয়া যায়নি</option></select>`;
     } else {
-      wrapper.innerHTML = `<select id="borrower" name="borrower"><option value="">কার্ড নির্বাচন করুন</option>${cards.map(c=>`<option value="${c}">${c}</option>`).join('')}</select>`;
+      wrapper.innerHTML = `<select id="borrower" name="borrower"><option value="">কার্ড নির্বাচন করুন</option>${cards.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('')}</select>`;
     }
   } else {
     wrapper.innerHTML = '';
   }
 }
 
+function onRepayDirChange(){
+  const dir = document.querySelector('#financeForm input[name=repayDir]:checked')?.value;
+  document.getElementById('fromLabelText').textContent = repayFromLabel(dir);
+}
+
 function onFromAccountChange(){
   const fromSelect = document.getElementById('fromAccount');
   const toSelect = document.getElementById('toAccount');
-  const cardGroup = document.getElementById('cardNetworkGroup');
   const fromValue = fromSelect.value;
+  const prevTo = toSelect.value;   // আগের নির্বাচিত গন্তব্য ধরে রাখা
   toSelect.innerHTML = '<option value="">অ্যাকাউন্ট নির্বাচন করুন</option>';
   (masterData.accounts||[]).forEach(acc=>{
     const opt = document.createElement('option'); opt.value = acc; opt.textContent = acc;
     if (acc === fromValue){ opt.disabled = true; opt.style.color = "#94a3b8"; }
     toSelect.appendChild(opt);
   });
-  // D6: ধরন Card হলে
-  const accType = (window.__accounts||[]).find(a=>a.name===fromValue)?.type || '';
-  cardGroup.style.display = accType === 'Card' ? 'flex' : 'none';
+  toSelect.value = (prevTo && prevTo !== fromValue) ? prevTo : '';
+  applyFieldRules(document.getElementById('financeForm'), currentFormRules()); // কার্ড-নেটওয়ার্ক দেখানোর একটাই নিয়ম
 }
 
 function setAccent(type){
-  const map = [["আয়","income"],["ব্যয়","expense"],["খরচ","expense"],["স্থানান্তর","transfer"],["বিনিয়োগ","invest"],["ঋণ","loan"]];
-  const hit = map.find(m=> type.includes(m[0]));
+  const t = nfc(type);
+  const map = [[T.INCOME,"income"],[T.EXPENSE,"expense"],[nfc("খরচ"),"expense"],[T.TRANSFER,"transfer"],[T.INVEST,"invest"],[T.LOAN,"loan"]];
+  const hit = map.find(m=> t.includes(m[0]));
   if (hit) document.body.dataset.type = hit[1]; else delete document.body.dataset.type;
 }
 
 const form = document.getElementById('financeForm');
 const submitBtn = document.getElementById('submitBtn');
 
-form.addEventListener('submit', e=>{
+// রিট্রাই-নিরাপদ ID: সার্ভারে সেভ হয়ে গিয়ে রেসপন্স হারালে আবার চাপলে ডুপ্লিকেট হবে না
+let pendingTxnId = null;
+function genClientId(){
+  const raw = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now().toString(16) + Math.random().toString(16).slice(2));
+  return raw.replace(/-/g,'').slice(0,8).toUpperCase();
+}
+form.addEventListener('input', ()=>{ pendingTxnId = null; });
+form.addEventListener('change', ()=>{ pendingTxnId = null; });
+
+form.addEventListener('submit', async e=>{
   e.preventDefault();
-  // F5: শুধু দৃশ্যমান required যাচাই
   const bad = [...form.querySelectorAll('[required]')].find(el => el.offsetParent !== null && !el.value);
   if (bad){ showToast('সব * চিহ্নিত ঘর পূরণ করুন!', 'error'); bad.focus(); return; }
+
+  const rules = currentFormRules();
+  const type = document.getElementById('transactionType').value;
+  const vals = {
+    from: rules.showFrom ? document.getElementById('fromAccount').value : '',
+    to: rules.showTo ? document.getElementById('toAccount').value : '',
+    borrower: rules.borrowerKind !== 'none' ? (document.getElementById('borrower')?.value || '').trim() : ''
+  };
+  const err = validateByRules(rules, vals);
+  if (err){ showToast(err, 'error'); return; }
+
   submitBtn.disabled = true;
   submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> সেভ হচ্ছে...';
+
   const formData = new FormData(form);
   formData.set('date', formattedBackendDate);
-  // D1: repayDir → direction তথ্য borrower-এ যুক্ত (ঐচ্ছিক); সার্ভার নাম দেখে ঠিক করে
-  fetch(scriptURL, { method:'POST', body: formData })
-    .then(response => response.json())
-    .then(data => {
-      if (data.result === 'success'){
-        showToast('✓ লেনদেন সফলভাবে সেভ হয়েছে!', 'success');
-        form.reset();
-        fp.setDate(new Date()); setBackendDate(new Date());
-        document.getElementById("category").disabled = true;
-        document.getElementById("category").innerHTML = '<option value="">আগে ধরন নির্বাচন করুন</option>';
-        document.getElementById("subCategory").disabled = true;
-        document.getElementById("subCategory").innerHTML = '<option value="">আগে প্রধান খাত নির্বাচন করুন</option>';
-        document.getElementById("toAccountGroup").style.display = "none";
-        document.getElementById("cardNetworkGroup").style.display = "none";
-        document.getElementById("borrowerGroup").style.display = "none";
-        document.getElementById("repayDirectionGroup").style.display = "none";
-        document.getElementById('fromAccount').required = true;
-        setAccent("");
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = '<i class="fa-solid fa-check"></i> লেনদেন সেভ করুন';
-        refreshAll();
-        setTimeout(()=> showView('home'), 500);
-      } else throw new Error(data.error || 'Server error');
-    })
-    .catch(error => {
-      console.error('Error:', error);
-      showToast('✕ ডেটা সেভ করতে সমস্যা: ' + error.message, 'error');
-      submitBtn.disabled = false;
-      submitBtn.innerHTML = '<i class="fa-solid fa-check"></i> লেনদেন সেভ করুন';
-    });
+  // লুকানো ফিল্ডের পুরোনো মান পাঠানো হবে না
+  if (!rules.showFrom) formData.delete('fromAccount');
+  if (!rules.showTo) formData.delete('toAccount');
+  if (rules.borrowerKind === 'none') formData.delete('borrower'); else formData.set('borrower', vals.borrower);
+  if (!rules.showRepayDir) formData.delete('repayDir');
+  const fromType = (window.__accounts||[]).find(a=>a.name===vals.from)?.type || '';
+  if (!(rules.showCard || (rules.showFrom && fromType==='Card'))) formData.delete('cardNetwork');
+  if (!pendingTxnId) pendingTxnId = genClientId();
+  formData.set('id', pendingTxnId);
+
+  try {
+    const data = await callPost(formData);
+    if (data.result !== 'success') throw new Error(data.error || 'Server error');
+    pendingTxnId = null;
+    showToast('✓ লেনদেন সফলভাবে সেভ হয়েছে!', 'success');
+    form.reset();
+    fp.setDate(new Date()); setBackendDate(new Date());
+    document.getElementById("category").disabled = true;
+    document.getElementById("category").innerHTML = '<option value="">আগে ধরন নির্বাচন করুন</option>';
+    document.getElementById("subCategory").disabled = true;
+    document.getElementById("subCategory").innerHTML = '<option value="">আগে প্রধান খাত নির্বাচন করুন</option>';
+    document.getElementById('borrowerWrapper').innerHTML = '';
+    applyFieldRules(form, fieldRules('', ''));
+    setAccent("");
+    refreshAll();
+    setTimeout(()=> showView('home'), 500);
+  } catch(error){
+    console.error('Error:', error);
+    showToast('✕ ডেটা সেভ করতে সমস্যা: ' + error.message, 'error');
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = '<i class="fa-solid fa-check"></i> লেনদেন সেভ করুন';
+  }
 });
 </script>
 </body>
